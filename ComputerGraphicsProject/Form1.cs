@@ -17,21 +17,39 @@ namespace ComputerGraphicsProject
             DoubleBuffered = true;
         }
 
-        List<Point> points = new List<Point>();
+        List<Line> lines = new List<Line>();
+
+        bool is_first_point = true;
+        Point first_point;
 
         private void Form1_MouseClick(object sender, MouseEventArgs e)
         {
             Point point = PointToClient(Cursor.Position);
-            points.Add(point);
-            // MessageBox.Show(point.ToString());
+            // MessageBox.Show(string.Format("point position: {0}", point));
+            if(is_first_point)
+            {
+                is_first_point = false;
+                first_point = point;
+                return;
+            }
+            else
+            {
+                lines.Add(new Line(first_point, point));
+                is_first_point = true;
+            }
+        }
+
+        static public void DrawPoint(PaintEventArgs e, int x, int y)
+        {
+            Rectangle rect = new Rectangle(x, y, 1, 1);
+            e.Graphics.DrawRectangle(Pens.Red, rect);
         }
 
         private void Form1_Paint(object sender, PaintEventArgs e)
         {
-            var len = points.Count;
-            // MessageBox.Show(string.Format("len:{0}\n", len));
-            for (var i = 0; i < len / 2; i++)
-                e.Graphics.DrawLine(Pens.Red, points[2 * i], points[2 * i + 1]);
+            var len = lines.Count;
+            for (var i = 0; i < len; i++)
+                lines[i].DDA(e);
         }
 
         private void timer1_Tick(object sender, EventArgs e)
