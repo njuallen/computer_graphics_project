@@ -18,6 +18,7 @@ namespace ComputerGraphicsProject
         }
 
         List<Line> lines = new List<Line>();
+        List<Circle> circles = new List<Circle>();
 
         bool is_first_point = true;
         Point first_point;
@@ -34,7 +35,11 @@ namespace ComputerGraphicsProject
             }
             else
             {
-                lines.Add(new Line(first_point, point));
+                // lines.Add(new Line(first_point, point));
+                int dx = point.X - first_point.X;
+                int dy = point.Y - first_point.Y;
+                int distance = (int)Math.Sqrt(dx * dx + dy * dy);
+                circles.Add(new Circle(first_point, distance));
                 is_first_point = true;
             }
         }
@@ -47,9 +52,14 @@ namespace ComputerGraphicsProject
 
         private void Form1_Paint(object sender, PaintEventArgs e)
         {
+            /*
             var len = lines.Count;
             for (var i = 0; i < len; i++)
                 lines[i].Bresenham(e);
+                */
+            var len = circles.Count;
+            for (var i = 0; i < len; i++)
+                circles[i].Draw(e);
         }
 
         private void timer1_Tick(object sender, EventArgs e)
