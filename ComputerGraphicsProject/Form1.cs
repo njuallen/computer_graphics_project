@@ -49,7 +49,7 @@ namespace ComputerGraphicsProject
         {
             var len = lines.Count;
             for (var i = 0; i < len; i++)
-                lines[i].DDA(e);
+                lines[i].Bresenham(e);
         }
 
         private void timer1_Tick(object sender, EventArgs e)
