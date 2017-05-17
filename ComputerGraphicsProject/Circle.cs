@@ -11,7 +11,7 @@ namespace ComputerGraphicsProject
 	class Circle
 	{
 		private Point center;
-		int radius;
+		private int radius;
 		public Circle(Point c, int r)
 		{
 			center = c;
