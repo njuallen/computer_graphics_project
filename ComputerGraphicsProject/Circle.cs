@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace ComputerGraphicsProject
 {
-	class Circle
+	class Circle : Primitive
 	{
 		private Point center;
 		private int radius;
@@ -18,24 +18,25 @@ namespace ComputerGraphicsProject
 			radius = r;
 		}
 
-		public void Draw(PaintEventArgs e)
+		// 将图形上的点的坐标以一个list的形式返回
+		public override List<Point> Points()
 		{
-
 			int x = 0;
 			int y = radius;
 			// 决策参数p
 			int p = 5 * radius / 4;
+			List<Point> l = new List<Point>();
 			while(x < y)
 			{
-				// 画出这个点以及其他七个对称点
-				Form1.DrawPoint(e, center.X + x, center.Y + y);
-				Form1.DrawPoint(e, center.X + x, center.Y - y);
-				Form1.DrawPoint(e, center.X - x, center.Y + y);
-				Form1.DrawPoint(e, center.X - x, center.Y - y);
-				Form1.DrawPoint(e, center.X + y, center.Y + x);
-				Form1.DrawPoint(e, center.X + y, center.Y - x);
-				Form1.DrawPoint(e, center.X - y, center.Y + x);
-				Form1.DrawPoint(e, center.X - y, center.Y - x);
+				// 这个点以及其他七个对称点
+				l.Add(new Point(center.X + x, center.Y + y));
+				l.Add(new Point(center.X + x, center.Y - y));
+				l.Add(new Point(center.X - x, center.Y + y));
+				l.Add(new Point(center.X - x, center.Y - y));
+				l.Add(new Point(center.X + y, center.Y + x));
+				l.Add(new Point(center.X + y, center.Y - x));
+				l.Add(new Point(center.X - y, center.Y + x));
+				l.Add(new Point(center.X - y, center.Y - x));
 
 				x += 1;
 				if(p < 0)
@@ -44,10 +45,11 @@ namespace ComputerGraphicsProject
 				}
 				else
 				{
-                    p = p + 2 * x + 1 - 2 * (y - 1);
-						y = y - 1;
+					p = p + 2 * x + 1 - 2 * (y - 1);
+					y = y - 1;
 				}
 			}
-		} 
+			return l;
+		}
 	}
 }
