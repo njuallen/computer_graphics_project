@@ -24,12 +24,18 @@ namespace ComputerGraphicsProject
             }
         }
 
+        static int form_width = 800;
+        static int form_height = 600;
+
         List<DDALine> DDALines = new List<DDALine>();
         List<BresenhamLine> BresenhamLines = new List<BresenhamLine>();
         List<Circle> circles = new List<Circle>();
         List<Ellipse> ellipses = new List<Ellipse>();
+        List<Polygon> polygons = new List<Polygon>();
         // 填充的块
         List<Block> fill = new List<Block>();
+
+        List<Point> vertices = new List<Point>();
 
         bool isMouseDown = false;
         Point firstPoint;
@@ -48,19 +54,6 @@ namespace ComputerGraphicsProject
         Pen selectionPen = Pens.Yellow;
         // 这是用来进行区域填充的颜色
         Pen fillPen = Pens.Black;
-
-        // 首先先清除上一次选中的图形的信息
-        private void ClearPointerSelection()
-        {
-            foreach (var l in DDALines)
-                l.isSelected = false;
-            foreach (var l in BresenhamLines)
-                l.isSelected = false;
-            foreach (var l in circles)
-                l.isSelected = false;
-            foreach (var l in ellipses)
-                l.isSelected = false;
-        }
 
         private void Form1_MouseClick(object sender, MouseEventArgs e)
         {
@@ -101,37 +94,26 @@ namespace ComputerGraphicsProject
                         return;
                     }
                 }
+                foreach (var l in polygons)
+                {
+                    if (l.Distance(point) <= 3.0)
+                    {
+                        l.isSelected = true;
+                        return;
+                    }
+                }
             }
             else if(mode == "Fill")
             {
                 var block = new Block(point);
                 fill.Add(block);
             }
-            else
+            else if(mode == "Polygon")
             {
-
+                // 将当前点加入到多边形的顶点序列中
+                vertices.Add(point);
             }
         }
-
-        static public void DrawPoint(PaintEventArgs e, Pen pen, int x, int y)
-        {
-            if (x >= 0 && x < form_width && y >= 60 && y < form_height)
-            {
-                flag[x][y] = true;
-                Rectangle rect = new Rectangle(x, y, 1, 1);
-                e.Graphics.DrawRectangle(pen, rect);
-            }
-        }
-
-        // 检查这个点是否在画布上
-        // 画布的范围是不包括button的空白位置
-        static public bool CheckOnCanvas(int x, int y)
-        {
-            return x >= 0 && x <= form_width && y >= 60 && y <= form_height;
-        }
-
-		static int form_width = 800;
-		static int form_height = 600;
 
         private void Form1_Paint(object sender, PaintEventArgs e)
         {
@@ -177,12 +159,34 @@ namespace ComputerGraphicsProject
 				else
 					ellipses[i].Draw(e, drawingPen);
 
+            len = polygons.Count;
+            for (var i = 0; i < len; i++)
+                if (polygons[i].isSelected)
+                    polygons[i].Draw(e, selectionPen);
+                else
+                    polygons[i].Draw(e, drawingPen);
+
             len = fill.Count;
             for (var i = 0; i < len; i++)
                 fill[i].Draw(e, fillPen);
 
             // show the one that the user is drawing
             var point = PointToClient(Cursor.Position);
+            if(mode == "Polygon")
+            {
+                len = vertices.Count;
+                for(var i = 0; i < len - 1; i++)
+                {
+                    var line = new BresenhamLine(vertices[i], vertices[i + 1]);
+                    line.Draw(e, currPen);
+                }
+                if(len > 0)
+                {
+                    var line = new BresenhamLine(vertices[len - 1], point);
+                    line.Draw(e, currPen);
+                }
+            }
+
             if (isMouseDown)
             {
                 if (mode == "DDA")
@@ -220,48 +224,7 @@ namespace ComputerGraphicsProject
                 }
             }
         }
-
-        private void timer1_Tick(object sender, EventArgs e)
-        {
-            Refresh();
-        }
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-            isMouseDown = false;
-            ClearPointerSelection();
-            mode = "DDA";
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            isMouseDown = false;
-            ClearPointerSelection();
-            mode = "Bresenham";
-        }
-
-        private void button3_Click(object sender, EventArgs e)
-        {
-            isMouseDown = false;
-            ClearPointerSelection();
-            mode = "Circle";
-        }
-
-        private void button4_Click(object sender, EventArgs e)
-        {
-            isMouseDown = false;
-            ClearPointerSelection();
-            mode = "Ellipse";
-        }
-
-
-        private void button5_Click(object sender, EventArgs e)
-		{
-			isMouseDown = false;
-            ClearPointerSelection();
-			mode = "Pointer";
-		}
-
+   
         private void Form1_MouseDown(object sender, MouseEventArgs e)
         {
             Point point = PointToClient(Cursor.Position);
@@ -305,11 +268,103 @@ namespace ComputerGraphicsProject
             }
         }
 
+        private void button1_Click(object sender, EventArgs e)
+        {
+            isMouseDown = false;
+            ClearPointerSelection();
+            mode = "Bresenham";
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            isMouseDown = false;
+            ClearPointerSelection();
+            mode = "DDA";
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            isMouseDown = false;
+            ClearPointerSelection();
+            mode = "Circle";
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            isMouseDown = false;
+            ClearPointerSelection();
+            mode = "Ellipse";
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            isMouseDown = false;
+            ClearPointerSelection();
+            mode = "Pointer";
+        }
+
         private void button6_Click_1(object sender, EventArgs e)
         {
             isMouseDown = false;
             ClearPointerSelection();
             mode = "Fill";
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            isMouseDown = false;
+            ClearPointerSelection();
+            mode = "Polygon";
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            Refresh();
+        }
+
+        static public void DrawPoint(PaintEventArgs e, Pen pen, int x, int y)
+        {
+            if (x >= 0 && x < form_width && y >= 60 && y < form_height)
+            {
+                flag[x][y] = true;
+                Rectangle rect = new Rectangle(x, y, 1, 1);
+                e.Graphics.DrawRectangle(pen, rect);
+            }
+        }
+
+        // 检查这个点是否在画布上
+        // 画布的范围是不包括button的空白位置
+        static public bool CheckOnCanvas(int x, int y)
+        {
+            return x >= 0 && x <= form_width && y >= 60 && y <= form_height;
+        }
+
+        // 首先先清除上一次选中的图形的信息
+        private void ClearPointerSelection()
+        {
+            foreach (var l in DDALines)
+                l.isSelected = false;
+            foreach (var l in BresenhamLines)
+                l.isSelected = false;
+            foreach (var l in circles)
+                l.isSelected = false;
+            foreach (var l in ellipses)
+                l.isSelected = false;
+            foreach (var l in polygons)
+                l.isSelected = false;
+        }
+
+        private void Form1_DoubleClick(object sender, EventArgs e)
+        {
+            if(mode == "Polygon")
+            {
+                // 画多边形是以双击表示结束的
+                // 首先先将当前点加入到多边形的顶点序列中，作为最后一个点
+                var point = PointToClient(Cursor.Position);
+                vertices.Add(point);
+                polygons.Add(new Polygon(vertices));
+                vertices.Clear();
+            }
         }
     }
 }

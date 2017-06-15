@@ -17,44 +17,43 @@ namespace ComputerGraphicsProject
         }
 
         // 以p点为中心开始扩展，填充
-        private List<Point> Points()
+        public List<Point> Points()
         {
-            {
-                List<Point> l = new List<Point>();
 
-                Queue<Point> q = new Queue<Point>();
-                Form1.flag[p.X][p.Y] = true;
-                q.Enqueue(p);
-                while (q.Count > 0)
+            List<Point> l = new List<Point>();
+
+            Queue<Point> q = new Queue<Point>();
+            Form1.flag[p.X][p.Y] = true;
+            q.Enqueue(p);
+            while (q.Count > 0)
+            {
+                p = q.Dequeue();
+                var x = p.X;
+                var y = p.Y;
+                l.Add(p);
+                // 使用四邻域扩充
+                if (Form1.CheckOnCanvas(x + 1, y) && !Form1.flag[x + 1][y])
                 {
-                    p = q.Dequeue();
-                    var x = p.X;
-                    var y = p.Y;
-                    l.Add(p);
-                    // 使用四邻域扩充
-                    if (Form1.CheckOnCanvas(x + 1, y) && !Form1.flag[x + 1][y])
-                    {
-                        Form1.flag[x + 1][y] = true;
-                        q.Enqueue(new Point(x + 1, y));
-                    }
-                    if (Form1.CheckOnCanvas(x - 1, y) && !Form1.flag[x - 1][y])
-                    {
-                        Form1.flag[x - 1][y] = true;
-                        q.Enqueue(new Point(x - 1, y));
-                    }
-                    if (Form1.CheckOnCanvas(x, y + 1) && !Form1.flag[x][y + 1])
-                    {
-                        Form1.flag[x][y + 1] = true;
-                        q.Enqueue(new Point(x, y + 1));
-                    }
-                    if (Form1.CheckOnCanvas(x, y - 1) && !Form1.flag[x][y - 1])
-                    {
-                        Form1.flag[x][y - 1] = true;
-                        q.Enqueue(new Point(x, y - 1));
-                    }
+                    Form1.flag[x + 1][y] = true;
+                    q.Enqueue(new Point(x + 1, y));
                 }
-                return l;
+                if (Form1.CheckOnCanvas(x - 1, y) && !Form1.flag[x - 1][y])
+                {
+                    Form1.flag[x - 1][y] = true;
+                    q.Enqueue(new Point(x - 1, y));
+                }
+                if (Form1.CheckOnCanvas(x, y + 1) && !Form1.flag[x][y + 1])
+                {
+                    Form1.flag[x][y + 1] = true;
+                    q.Enqueue(new Point(x, y + 1));
+                }
+                if (Form1.CheckOnCanvas(x, y - 1) && !Form1.flag[x][y - 1])
+                {
+                    Form1.flag[x][y - 1] = true;
+                    q.Enqueue(new Point(x, y - 1));
+                }
             }
+            return l;
         }
     }
 }

@@ -20,7 +20,7 @@ namespace ComputerGraphicsProject
         }
 
 		// 将图形上的点的坐标以一个list的形式返回
-		private List<Point> Points()
+		public List<Point> Points()
 		{
 			int x = 0;
 			int y = radius;

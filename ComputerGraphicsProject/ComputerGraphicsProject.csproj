@@ -61,6 +61,7 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="Line.cs" />
+    <Compile Include="Polygon.cs" />
     <Compile Include="Primitive.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -131,6 +132,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\ink%281%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\polygon.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

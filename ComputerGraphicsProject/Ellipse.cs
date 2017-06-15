@@ -20,7 +20,7 @@ namespace ComputerGraphicsProject
             points = Points();
 		}
 
-		private List<Point> Points()
+		public List<Point> Points()
 		{
 			List<Point> l = new List<Point>();
 			int x = 0;

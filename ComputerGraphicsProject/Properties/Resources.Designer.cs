@@ -183,6 +183,16 @@ namespace ComputerGraphicsProject.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap polygon {
+            get {
+                object obj = ResourceManager.GetObject("polygon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap resizeApi {
             get {
                 object obj = ResourceManager.GetObject("resizeApi", resourceCulture);
