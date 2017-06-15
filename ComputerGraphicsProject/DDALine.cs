@@ -21,7 +21,7 @@ namespace ComputerGraphicsProject
             var start = 0;
             var end = 0;
             // the start position of the second axis
-            var second_axis_start = 0;
+            double second_axis_start = 0.0;
             var sampling_delta = 1;
             double k = 0.0;
             if (dx == 0)
@@ -57,14 +57,14 @@ namespace ComputerGraphicsProject
             {
                 if (sampling_direction == "X")
                 {
-                    l.Add(new Point(start, second_axis_start));
+                    l.Add(new Point(start, Convert.ToInt32(second_axis_start)));
                 }
                 else
                 {
-                    l.Add(new Point(second_axis_start, start));
+                    l.Add(new Point(Convert.ToInt32(second_axis_start), start));
                 }
                 start += sampling_delta;
-                second_axis_start = Convert.ToInt32(second_axis_start + k * sampling_delta);
+                second_axis_start += k * sampling_delta;
             }
             return l;
         }

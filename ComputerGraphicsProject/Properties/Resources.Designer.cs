@@ -63,6 +63,16 @@ namespace ComputerGraphicsProject.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap _1103061 {
+            get {
+                object obj = ResourceManager.GetObject("1103061", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap circle {
             get {
                 object obj = ResourceManager.GetObject("circle", resourceCulture);
@@ -116,6 +126,16 @@ namespace ComputerGraphicsProject.Properties {
         internal static System.Drawing.Bitmap resizeApi {
             get {
                 object obj = ResourceManager.GetObject("resizeApi", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap resizeApi1 {
+            get {
+                object obj = ResourceManager.GetObject("resizeApi1", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
