@@ -1,4 +1,6 @@
-﻿using System;
+﻿// #define MYDEBUG
+
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
@@ -14,12 +16,25 @@ namespace ComputerGraphicsProject
 
         public virtual void Draw(PaintEventArgs e, Pen pen)
         {
+#if MYDEBUG
+            Console.WriteLine("*************************************");
+#endif
             foreach (var p in points)
             {
+#if MYDEBUG
+                Console.WriteLine(p.ToString());
+#endif
                 Form1.DrawPoint(e, pen, p.X, p.Y);
             }
+#if MYDEBUG
+            Console.WriteLine("*************************************");
+#endif
         }
 
+        public virtual List<Point> Points()
+        {
+            return new List<Point>();
+        }
         // 返回点a到图元的距离
         // 点a到图元的距离被定义为图元上的点到a点的距离的最小值
         public virtual double Distance(Point a)

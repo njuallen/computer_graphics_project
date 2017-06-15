@@ -11,8 +11,16 @@ namespace ComputerGraphicsProject
             points = Points();
         }
 
-        public List<Point> Points()
+        public override List<Point> Points()
         {
+            // 注意：我的这个实现要求a.X < b.X
+            // 搜易我们先进行交换，以满足要求
+            if(b.X < a.X)
+            {
+                var tmp = b;
+                b = a;
+                a = tmp;
+            }
             List<Point> l = new List<Point>();
             var dx = b.X - a.X;
             var dy = b.Y - a.Y;

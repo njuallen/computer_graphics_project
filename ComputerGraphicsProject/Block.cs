@@ -17,7 +17,7 @@ namespace ComputerGraphicsProject
         }
 
         // 以p点为中心开始扩展，填充
-        public List<Point> Points()
+        public override List<Point> Points()
         {
 
             List<Point> l = new List<Point>();

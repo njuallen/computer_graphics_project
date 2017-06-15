@@ -1,6 +1,10 @@
-﻿using System;
+﻿// #define MYDEBUG
+
+
+using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 
 namespace ComputerGraphicsProject
@@ -117,6 +121,13 @@ namespace ComputerGraphicsProject
 
         private void Form1_Paint(object sender, PaintEventArgs e)
         {
+#if MYDEBUG
+            Console.WriteLine("********************");
+            var tmp = new BresenhamLine(new Point(455, 228), new Point(366, 259));
+            tmp.Draw(e, currPen);
+            timer1.Enabled = false;
+            return;
+#endif
 
             // 由于要进行重绘，所以屏幕上的点要全部被清空
             // 每一次都进行重新绘制，确实比较慢
@@ -199,7 +210,7 @@ namespace ComputerGraphicsProject
                     var line = new BresenhamLine(firstPoint, point);
                     line.Draw(e, currPen);
                 }
-                else if(mode == "Circle")
+                else if (mode == "Circle")
                 {
                     int dx = point.X - firstPoint.X;
                     int dy = point.Y - firstPoint.Y;
@@ -207,7 +218,7 @@ namespace ComputerGraphicsProject
                     var circle = new Circle(firstPoint, distance);
                     circle.Draw(e, currPen);
                 }
-                else if(mode == "Ellipse")
+                else if (mode == "Ellipse")
                 {
                     // 第一个点和第二个点构成一个矩形，椭圆是这个矩形的内切椭圆
                     var center = new Point((firstPoint.X + point.X) / 2, (firstPoint.Y + point.Y) / 2);
@@ -218,9 +229,20 @@ namespace ComputerGraphicsProject
                     var ellipse = new Ellipse(center, x, y);
                     ellipse.Draw(e, currPen);
                 }
-                else
+                else if (mode == "Trimming")
                 {
+                    
+                    // 裁剪所用的矩形
+                    var width = Math.Abs(firstPoint.X - point.X);
+                    var height = Math.Abs(firstPoint.Y - point.Y);
+                    var minX = Math.Min(firstPoint.X, point.X);
+                    var minY = Math.Min(firstPoint.Y, point.Y);
+                    Rectangle rect = new Rectangle(minX, minY, width, height);
 
+                    // 画出裁剪所用的那个矩形框
+                    Pen trimmingPen = new Pen(Color.GreenYellow, 2);
+                    trimmingPen.DashStyle = DashStyle.Dash;
+                    e.Graphics.DrawRectangle(trimmingPen, rect);
                 }
             }
         }
@@ -262,9 +284,26 @@ namespace ComputerGraphicsProject
 				var y = Math.Abs((firstPoint.Y - point.Y) / 2);
 				ellipses.Add(new Ellipse(center, x, y));
 			}
-            else
+            else if(mode == "Trimming")
             {
+                // 裁剪所用的矩形的大小
+                var width = Math.Abs(firstPoint.X - point.X);
+                var height = Math.Abs(firstPoint.Y - point.Y);
+                var minX = Math.Min(firstPoint.X, point.X);
+                var minY = Math.Min(firstPoint.Y, point.Y);
+                Rectangle rect = new Rectangle(minX, minY, width, height);
+                // 将直线和多边形都裁剪一遍
+                var len = DDALines.Count;
+                for (var i = 0; i < len; i++)
+                    DDALines[i].Trim(rect);
 
+                len = BresenhamLines.Count;
+                for (var i = 0; i < len; i++)
+                    BresenhamLines[i].Trim(rect);
+
+                len = polygons.Count;
+                for (var i = 0; i < len; i++)
+                    polygons[i].Trim(rect);
             }
         }
 
@@ -317,6 +356,14 @@ namespace ComputerGraphicsProject
             mode = "Polygon";
         }
 
+        private void button8_Click(object sender, EventArgs e)
+        {
+            isMouseDown = false;
+            ClearPointerSelection();
+            // 裁剪
+            mode = "Trimming";
+        }
+
         private void timer1_Tick(object sender, EventArgs e)
         {
             Refresh();
@@ -336,7 +383,7 @@ namespace ComputerGraphicsProject
         // 画布的范围是不包括button的空白位置
         static public bool CheckOnCanvas(int x, int y)
         {
-            return x >= 0 && x <= form_width && y >= 60 && y <= form_height;
+            return x >= 0 && x < form_width && y >= 60 && y < form_height;
         }
 
         // 首先先清除上一次选中的图形的信息
@@ -366,5 +413,7 @@ namespace ComputerGraphicsProject
                 vertices.Clear();
             }
         }
+
+        
     }
 }

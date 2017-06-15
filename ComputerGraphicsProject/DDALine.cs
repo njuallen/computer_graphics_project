@@ -11,7 +11,7 @@ namespace ComputerGraphicsProject
             points = Points();
         }
 
-        public List<Point> Points()
+        public override List<Point> Points()
         {
             List<Point> l = new List<Point>();
             var dx = b.X - a.X;

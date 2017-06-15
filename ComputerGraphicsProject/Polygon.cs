@@ -17,7 +17,7 @@ namespace ComputerGraphicsProject
         }
 
         // 以p点为中心开始扩展，填充
-        public List<Point> Points()
+        public override List<Point> Points()
         {
             List<Point> l = new List<Point>();
             var len = vertices.Count;
@@ -26,8 +26,11 @@ namespace ComputerGraphicsProject
                 var p = new BresenhamLine(vertices[i], vertices[(i + 1) % len]);
                 l.AddRange(p.Points());
             }
-
             return l;
+        }
+
+        public void Trim(Rectangle rect)
+        {
 
         }
     }
