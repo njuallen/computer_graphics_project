@@ -8,9 +8,10 @@ namespace ComputerGraphicsProject
     {
         public BresenhamLine(Point pa, Point pb) : base(pa, pb)
         {
+            points = Points();
         }
 
-        public override List<Point> Points()
+        private List<Point> Points()
         {
             List<Point> l = new List<Point>();
             var dx = b.X - a.X;

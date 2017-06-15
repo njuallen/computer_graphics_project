@@ -16,10 +16,11 @@ namespace ComputerGraphicsProject
 		{
 			center = c;
 			radius = r;
-		}
+            points = Points();
+        }
 
 		// 将图形上的点的坐标以一个list的形式返回
-		public override List<Point> Points()
+		private List<Point> Points()
 		{
 			int x = 0;
 			int y = radius;

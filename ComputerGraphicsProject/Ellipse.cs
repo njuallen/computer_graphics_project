@@ -17,9 +17,10 @@ namespace ComputerGraphicsProject
 			center = c;
 			rx = x;
 			ry = y;
+            points = Points();
 		}
 
-		public override List<Point> Points()
+		private List<Point> Points()
 		{
 			List<Point> l = new List<Point>();
 			int x = 0;

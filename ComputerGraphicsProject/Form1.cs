@@ -1,10 +1,6 @@
-﻿// #define DEBUG_PRIMITIVE
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
-using System.Text;
 using System.Windows.Forms;
 
 namespace ComputerGraphicsProject
@@ -32,15 +28,17 @@ namespace ComputerGraphicsProject
         List<BresenhamLine> BresenhamLines = new List<BresenhamLine>();
         List<Circle> circles = new List<Circle>();
         List<Ellipse> ellipses = new List<Ellipse>();
-        // 进行填充时的开始点位置
-        List<Point> fill = new List<Point>();
+        // 填充的块
+        List<Block> fill = new List<Block>();
 
         bool isMouseDown = false;
         Point firstPoint;
+
         string mode = "Bresenham";
+
         // 这个flag标识着屏幕上的某个位置是否有像素点
         // 屏幕大小为form_width * form_height
-        static List<List<bool>> flag = new List<List<bool>>();
+        static public List<List<bool>> flag = new List<List<bool>>();
         
         // we use Red to draw
         Pen drawingPen = Pens.Red;
@@ -106,7 +104,8 @@ namespace ComputerGraphicsProject
             }
             else if(mode == "Fill")
             {
-                fill.Add(point);
+                var block = new Block(point);
+                fill.Add(block);
             }
             else
             {
@@ -119,9 +118,6 @@ namespace ComputerGraphicsProject
             if (x >= 0 && x < form_width && y >= 60 && y < form_height)
             {
                 flag[x][y] = true;
-#if DEBUG_PRIMITIVE
-                Console.WriteLine(string.Format("({0}, {1})", x, y));
-#endif
                 Rectangle rect = new Rectangle(x, y, 1, 1);
                 e.Graphics.DrawRectangle(pen, rect);
             }
@@ -129,41 +125,9 @@ namespace ComputerGraphicsProject
 
         // 检查这个点是否在画布上
         // 画布的范围是不包括button的空白位置
-        static bool CheckOnCanvas(int x, int y)
+        static public bool CheckOnCanvas(int x, int y)
         {
             return x >= 0 && x <= form_width && y >= 60 && y <= form_height;
-        }
-
-        // 以p点为中心开始扩展，填充
-        public void Fill(PaintEventArgs e, Point p)
-        {
-            timer1.Enabled = false;
-            var fileStream = new FileStream("Log.txt", FileMode.Append, FileAccess.Write);
-            using (var streamWriter = new StreamWriter(fileStream, Encoding.UTF8))
-            {
-                Queue<Point> q = new Queue<Point>();
-                q.Enqueue(p);
-                while (q.Count > 0)
-                {
-                    p = q.Dequeue();
-                    var x = p.X;
-                    var y = p.Y;
-                    streamWriter.WriteLine("{0} {1}", x, y);
-                    // Draw current point
-                    DrawPoint(e, fillPen, x, y);
-                    // 使用四领域扩充
-                    if (CheckOnCanvas(x + 1, y) && !flag[x + 1][y])
-                        q.Enqueue(new Point(x + 1, y));
-                    if (CheckOnCanvas(x - 1, y) && !flag[x - 1][y])
-                        q.Enqueue(new Point(x - 1, y));
-                    if (CheckOnCanvas(x, y + 1) && !flag[x][y + 1])
-                        q.Enqueue(new Point(x, y + 1));
-                    if (CheckOnCanvas(x, y - 1) && !flag[x][y - 1])
-                        q.Enqueue(new Point(x, y - 1));
-                }
-                streamWriter.Flush();
-            }
-            // Application.Exit();    
         }
 
 		static int form_width = 800;
@@ -171,13 +135,16 @@ namespace ComputerGraphicsProject
 
         private void Form1_Paint(object sender, PaintEventArgs e)
         {
-#if  DEBUG_PRIMITIVE
-            Console.WriteLine("***************");
-            var tmp = new Ellipse(new Point(100, 100), 5, 10);
-            tmp.Draw(e, currPen);
-#endif
 
             // 由于要进行重绘，所以屏幕上的点要全部被清空
+            // 每一次都进行重新绘制，确实比较慢
+            // 尤其是色块，涉及到的点特别多，也就尤其地慢
+            // 但我感觉这样就行了，如果要搞增量绘制的话，每次只绘制改变的像素点
+            // 就会遇到一个比较麻烦的问题：
+            // 图形会重叠，如果这时我把上面的图形给移动了
+            // 则颜色要变成下面的图形的颜色
+            // 即必须要引入图层
+            // 这个就太复杂了，我不准备搞了
             for (var i = 0; i < form_width; i++)
                 for (var j = 0; j < form_height; j++)
                     flag[i][j] = false;
@@ -212,7 +179,7 @@ namespace ComputerGraphicsProject
 
             len = fill.Count;
             for (var i = 0; i < len; i++)
-                Fill(e, fill[i]);
+                fill[i].Draw(e, fillPen);
 
             // show the one that the user is drawing
             var point = PointToClient(Cursor.Position);
@@ -257,9 +224,6 @@ namespace ComputerGraphicsProject
         private void timer1_Tick(object sender, EventArgs e)
         {
             Refresh();
-#if DEBUG_PRIMITIVE
-            timer1.Enabled = false;
-#endif
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -297,13 +261,6 @@ namespace ComputerGraphicsProject
             ClearPointerSelection();
 			mode = "Pointer";
 		}
-
-        private void button6_Click(object sender, EventArgs e)
-        {
-            isMouseDown = false;
-            ClearPointerSelection();
-            mode = "Fill";
-        }
 
         private void Form1_MouseDown(object sender, MouseEventArgs e)
         {
@@ -346,6 +303,13 @@ namespace ComputerGraphicsProject
             {
 
             }
+        }
+
+        private void button6_Click_1(object sender, EventArgs e)
+        {
+            isMouseDown = false;
+            ClearPointerSelection();
+            mode = "Fill";
         }
     }
 }

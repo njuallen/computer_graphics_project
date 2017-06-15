@@ -49,6 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Block.cs" />
     <Compile Include="BresenhamLine.cs" />
     <Compile Include="Circle.cs" />
     <Compile Include="DDALine.cs" />
@@ -112,6 +113,24 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\1103061.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\line_21.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\line_22.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\line.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\circle1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\pointer.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ink%281%29.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

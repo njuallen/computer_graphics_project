@@ -9,16 +9,12 @@ namespace ComputerGraphicsProject
     class Primitive
     {
         public bool isSelected = false;
-        public virtual List<Point> Points()
-        {
-            var l = new List<Point>();
-            return l;
-        }
+        // 这个图元边界上的点
+        protected List<Point> points;
 
         public virtual void Draw(PaintEventArgs e, Pen pen)
         {
-            var l = Points();
-            foreach (var p in l)
+            foreach (var p in points)
             {
                 Form1.DrawPoint(e, pen, p.X, p.Y);
             }
@@ -30,8 +26,7 @@ namespace ComputerGraphicsProject
         {
             // set the initial distance to a very large value
             double minDistance = 100000000000.0;
-            var l = Points();
-            foreach (var p in l)
+            foreach (var p in points)
             {
                 var dx = a.X - p.X;
                 var dy = a.Y - p.Y;

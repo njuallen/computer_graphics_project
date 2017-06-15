@@ -30,6 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.button6 = new System.Windows.Forms.Button();
             this.button5 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
@@ -40,12 +41,21 @@
             // timer1
             // 
             this.timer1.Enabled = true;
-            this.timer1.Interval = 10;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            // 
+            // button6
+            // 
+            this.button6.Image = global::ComputerGraphicsProject.Properties.Resources.ink_1_;
+            this.button6.Location = new System.Drawing.Point(300, 0);
+            this.button6.Name = "button6";
+            this.button6.Size = new System.Drawing.Size(60, 60);
+            this.button6.TabIndex = 5;
+            this.button6.UseVisualStyleBackColor = true;
+            this.button6.Click += new System.EventHandler(this.button6_Click_1);
             // 
             // button5
             // 
-            this.button5.Image = global::ComputerGraphicsProject.Properties.Resources.resizeApi;
+            this.button5.Image = global::ComputerGraphicsProject.Properties.Resources.pointer;
             this.button5.Location = new System.Drawing.Point(240, 0);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(60, 60);
@@ -65,7 +75,7 @@
             // 
             // button3
             // 
-            this.button3.Image = global::ComputerGraphicsProject.Properties.Resources.circle;
+            this.button3.Image = global::ComputerGraphicsProject.Properties.Resources.circle1;
             this.button3.Location = new System.Drawing.Point(120, 0);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(60, 60);
@@ -75,7 +85,7 @@
             // 
             // button2
             // 
-            this.button2.Image = global::ComputerGraphicsProject.Properties.Resources.line_2;
+            this.button2.Image = global::ComputerGraphicsProject.Properties.Resources.line;
             this.button2.Location = new System.Drawing.Point(60, 0);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(60, 60);
@@ -85,7 +95,7 @@
             // 
             // button1
             // 
-            this.button1.Image = global::ComputerGraphicsProject.Properties.Resources.line_11;
+            this.button1.Image = global::ComputerGraphicsProject.Properties.Resources.line_22;
             this.button1.Location = new System.Drawing.Point(0, 0);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(60, 60);
@@ -98,6 +108,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(784, 561);
+            this.Controls.Add(this.button6);
             this.Controls.Add(this.button5);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.button3);
@@ -118,13 +129,13 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.Button button5;
+        private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.Button button6;
     }
 }
 
