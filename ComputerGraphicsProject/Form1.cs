@@ -38,6 +38,7 @@ namespace ComputerGraphicsProject
         List<Polygon> polygons = new List<Polygon>();
         // 填充的块
         List<Block> fill = new List<Block>();
+        List<Bezier> beziers = new List<Bezier>();
 
         List<Point> vertices = new List<Point>();
 
@@ -117,6 +118,14 @@ namespace ComputerGraphicsProject
                 // 将当前点加入到多边形的顶点序列中
                 vertices.Add(point);
             }
+            else if(mode == "Bezier")
+            {
+                vertices.Add(point);
+            }
+            else
+            {
+
+            }
         }
 
         private void Form1_Paint(object sender, PaintEventArgs e)
@@ -177,13 +186,20 @@ namespace ComputerGraphicsProject
                 else
                     polygons[i].Draw(e, drawingPen);
 
+            len = beziers.Count;
+            for (var i = 0; i < len; i++)
+                if (beziers[i].isSelected)
+                    beziers[i].Draw(e, selectionPen);
+                else
+                    beziers[i].Draw(e, drawingPen);
+
             len = fill.Count;
             for (var i = 0; i < len; i++)
                 fill[i].Draw(e, fillPen);
 
             // show the one that the user is drawing
             var point = PointToClient(Cursor.Position);
-            if(mode == "Polygon")
+            if(mode == "Polygon" || mode == "Bezier")
             {
                 len = vertices.Count;
                 for(var i = 0; i < len - 1; i++)
@@ -364,6 +380,14 @@ namespace ComputerGraphicsProject
             mode = "Trimming";
         }
 
+        private void button9_Click(object sender, EventArgs e)
+        {
+            isMouseDown = false;
+            ClearPointerSelection();
+            // Bezier曲线
+            mode = "Bezier";
+        }
+
         private void timer1_Tick(object sender, EventArgs e)
         {
             Refresh();
@@ -412,8 +436,15 @@ namespace ComputerGraphicsProject
                 polygons.Add(new Polygon(vertices));
                 vertices.Clear();
             }
+            else if(mode == "Bezier")
+            {
+                // 画多边形是以双击表示结束的
+                // 首先先将当前点加入到多边形的顶点序列中，作为最后一个点
+                var point = PointToClient(Cursor.Position);
+                vertices.Add(point);
+                beziers.Add(new Bezier(vertices));
+                vertices.Clear();
+            }
         }
-
-        
     }
 }

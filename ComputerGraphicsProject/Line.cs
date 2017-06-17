@@ -113,8 +113,8 @@ namespace ComputerGraphicsProject
         // 如果线段完全在矩形内部或者完全在矩形外部， 则不变
         public void Trim(Rectangle rect)
 		{
-			bool aInRect = Helper.isInRectangle(rect, a);
-			bool bInRect = Helper.isInRectangle(rect, b);
+			bool aInRect = Helper.IsInRectangle(rect, a);
+			bool bInRect = Helper.IsInRectangle(rect, b);
 
 			// 矩形的边界
 			var xMax = rect.X + rect.Width;
@@ -155,7 +155,7 @@ namespace ComputerGraphicsProject
 					// 求出与矩形边界的交点
 					var upperPoint = new Point(inPoint.X, yMin);
 					var lowerPoint = new Point(inPoint.X, yMax);
-					if (Helper.isInBetween(inPoint, outPoint, upperPoint))
+					if (Helper.IsInBetween(inPoint, outPoint, upperPoint))
 						outPoint = upperPoint;
 					else
 						outPoint = lowerPoint;
@@ -166,7 +166,7 @@ namespace ComputerGraphicsProject
 					// 求出与矩形边界的交点
 					var leftPoint = new Point(xMin, inPoint.Y);
 					var rightPoint = new Point(xMax, inPoint.Y);
-					if (Helper.isInBetween(inPoint, outPoint, leftPoint))
+					if (Helper.IsInBetween(inPoint, outPoint, leftPoint))
 						outPoint = leftPoint;
 					else
 						outPoint = rightPoint;
@@ -187,25 +187,25 @@ namespace ComputerGraphicsProject
 					Console.WriteLine(string.Format("lowerPoint: {0}", lowerPoint.ToString()));
                     */
                     List<Point> l = new List<Point>();
-                    if (Helper.isInBetween(a, b, leftPoint) && Helper.isInRectangle(rect, leftPoint))
+                    if (Helper.IsInBetween(a, b, leftPoint) && Helper.IsInRectangle(rect, leftPoint))
                     {
                         // Console.WriteLine("left");
                         l.Add(leftPoint);
                     }
 
-                    if (Helper.isInBetween(a, b, rightPoint) && Helper.isInRectangle(rect, rightPoint))
+                    if (Helper.IsInBetween(a, b, rightPoint) && Helper.IsInRectangle(rect, rightPoint))
                     {
                         // Console.WriteLine("right");
                         l.Add(rightPoint);
                     }
 
-                    if (Helper.isInBetween(a, b, upperPoint) && Helper.isInRectangle(rect, upperPoint))
+                    if (Helper.IsInBetween(a, b, upperPoint) && Helper.IsInRectangle(rect, upperPoint))
                     {
                         // Console.WriteLine("upper");
                         l.Add(upperPoint);
                     }
 
-                    if (Helper.isInBetween(a, b, lowerPoint) && Helper.isInRectangle(rect, lowerPoint))
+                    if (Helper.IsInBetween(a, b, lowerPoint) && Helper.IsInRectangle(rect, lowerPoint))
                     {
                         // Console.WriteLine("lower");
                         l.Add(lowerPoint);
@@ -242,7 +242,7 @@ namespace ComputerGraphicsProject
 
                     var upperPoint = new Point(a.X, yMin);
                     var lowerPoint = new Point(a.X, yMax);
-                    if (!Helper.isInBetween(a, b, upperPoint))
+                    if (!Helper.IsInBetween(a, b, upperPoint))
                         return;
                     a = upperPoint;
                     b = lowerPoint;
@@ -255,7 +255,7 @@ namespace ComputerGraphicsProject
                         return;
                     var leftPoint = new Point(xMin, a.Y);
                     var rightPoint = new Point(xMax, a.Y);
-                    if (!Helper.isInBetween(a, b, leftPoint))
+                    if (!Helper.IsInBetween(a, b, leftPoint))
                         return;
                     a = leftPoint;
                     b = rightPoint;
@@ -277,25 +277,25 @@ namespace ComputerGraphicsProject
                     */
 
                     List<Point> l = new List<Point>();
-                    if (Helper.isInBetween(a, b, leftPoint) && Helper.isInRectangle(rect, leftPoint))
+                    if (Helper.IsInBetween(a, b, leftPoint) && Helper.IsInRectangle(rect, leftPoint))
                     {
                         // Console.WriteLine("left");
                         l.Add(leftPoint);
                     }
 
-                    if (Helper.isInBetween(a, b, rightPoint) && Helper.isInRectangle(rect, rightPoint))
+                    if (Helper.IsInBetween(a, b, rightPoint) && Helper.IsInRectangle(rect, rightPoint))
                     {
                         // Console.WriteLine("right");
                         l.Add(rightPoint);
                     }
 
-                    if (Helper.isInBetween(a, b, upperPoint) && Helper.isInRectangle(rect, upperPoint))
+                    if (Helper.IsInBetween(a, b, upperPoint) && Helper.IsInRectangle(rect, upperPoint))
                     {
                         // Console.WriteLine("upper");
                         l.Add(upperPoint);
                     }
 
-                    if (Helper.isInBetween(a, b, lowerPoint) && Helper.isInRectangle(rect, lowerPoint))
+                    if (Helper.IsInBetween(a, b, lowerPoint) && Helper.IsInRectangle(rect, lowerPoint))
                     {
                         // Console.WriteLine("lower");
                         l.Add(lowerPoint);

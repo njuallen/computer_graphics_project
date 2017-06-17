@@ -16,22 +16,7 @@ namespace ComputerGraphicsProject
             // 但是这样子经常会导致最后一个点被记录两次，具体原因我还没搞清楚
             // 因此为了避免之后的裁剪出现问题，我们在这里就要清除重复的点
             // make a deep copy of the list
-            vertices = new List<Point>();
-            foreach(var p in lp)
-            {
-                bool found = false;
-                foreach(var v in vertices)
-                {
-                    if(v.X == p.X && v.Y == p.Y)
-                    {
-                        found = true;
-                        break;
-                    }
-                }
-                // 这样子，我们确保多边形的顶点没有重复
-                if (!found)
-                    vertices.Add(p);
-            }
+            vertices = Helper.RemoveDuplicatedPoint(lp);
             // 多边形边界上的点
             points = Points();
         }
