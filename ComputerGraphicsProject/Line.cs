@@ -22,13 +22,99 @@ namespace ComputerGraphicsProject
             }
         }
 
+        // 求两条直线的交点
+        // 其中l1必须是垂直或水平的直线
+        // l2不能和l1平行
+        public static Point Intersect(Line l1, Line l2)
+        {
+            // Console.WriteLine("Intersect");
+            if (l1.a.X == l1.b.X)
+            {
+                // l1是垂直线段
+                double k = (l2.b.Y - l2.a.Y) / (l2.b.X - l2.a.X);
+                return new Point(l1.a.X, Convert.ToInt32(l2.a.Y + k * (l1.a.X - l2.a.X)));
+            }
+            else if (l1.a.Y == l1.b.Y)
+            {
+                // l1是水平线段
+                // l2是垂直线段
+               
+                /*
+                Console.WriteLine(l2.a.ToString());
+                Console.WriteLine(l2.b.ToString());
+               */
+
+                if (l2.a.X == l2.b.X)
+                {
+                    return new Point(l2.a.X, l1.a.Y);
+                }
+                else
+                {
+                    // 做整数除法的时候，务必要转成double再算啊
+                    // 不然只要dy的绝对值小于dx，整数除法除出来肯定是0
+                    // 下面再把值为0的k放在分母上，很快就除0错了！
+                    double k = (double)(l2.b.Y - l2.a.Y) / (l2.b.X - l2.a.X);
+                    // Console.WriteLine(string.Format("k: {0}", k));
+                    return new Point(Convert.ToInt32((l1.a.Y - l2.a.Y) / k + l2.a.X), l1.a.Y);
+                }
+            }
+            else
+            {
+                return new Point(-1, -1);
+            }
+        }
+
+        // 判断p是否在直线l1的某一侧
+        // 直线l1必须为垂直或水平
+        // side指明是哪一侧，side为true，则说明是坐标增加的侧
+        // 例如对于垂直的直线，则为直线的右侧
+        // 若side为false，则说明是坐标减小的侧
+        // 例如对于水平的直线，就是直线的上侧
+        // 若此点恰好位于直线上，对于这个怎么处理，我还没想好
+        public static bool isInHalfSpace(Line l1, Point p, bool side)
+        {
+            if (l1.a.X == l1.b.X)
+            {
+                // 垂直线段
+                if(side)
+                {
+                    // 右侧
+                    return p.X > l1.a.X;
+                }
+                else
+                {
+                    // 左侧
+                    return p.X < l1.a.X;
+                }
+            }
+            else if (l1.a.Y == l1.b.Y)
+            {
+                // 水平线段
+                if (side)
+                {
+                    // 下侧
+                    return p.Y > l1.a.Y;
+                }
+                else
+                {
+                    // 上侧
+                    return p.Y < l1.a.Y;
+                }
+
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         // 利用矩形rect对线段进行裁剪
         // 如果线段有部分在矩形内部，则只保留那部分
         // 如果线段完全在矩形内部或者完全在矩形外部， 则不变
         public void Trim(Rectangle rect)
 		{
-			bool aInRect = isInRectangle(rect, a);
-			bool bInRect = isInRectangle(rect, b);
+			bool aInRect = Helper.isInRectangle(rect, a);
+			bool bInRect = Helper.isInRectangle(rect, b);
 
 			// 矩形的边界
 			var xMax = rect.X + rect.Width;
@@ -69,7 +155,7 @@ namespace ComputerGraphicsProject
 					// 求出与矩形边界的交点
 					var upperPoint = new Point(inPoint.X, yMin);
 					var lowerPoint = new Point(inPoint.X, yMax);
-					if (isInBetween(inPoint, outPoint, upperPoint))
+					if (Helper.isInBetween(inPoint, outPoint, upperPoint))
 						outPoint = upperPoint;
 					else
 						outPoint = lowerPoint;
@@ -80,7 +166,7 @@ namespace ComputerGraphicsProject
 					// 求出与矩形边界的交点
 					var leftPoint = new Point(xMin, inPoint.Y);
 					var rightPoint = new Point(xMax, inPoint.Y);
-					if (isInBetween(inPoint, outPoint, leftPoint))
+					if (Helper.isInBetween(inPoint, outPoint, leftPoint))
 						outPoint = leftPoint;
 					else
 						outPoint = rightPoint;
@@ -101,25 +187,25 @@ namespace ComputerGraphicsProject
 					Console.WriteLine(string.Format("lowerPoint: {0}", lowerPoint.ToString()));
                     */
                     List<Point> l = new List<Point>();
-                    if (isInBetween(a, b, leftPoint) && isInRectangle(rect, leftPoint))
+                    if (Helper.isInBetween(a, b, leftPoint) && Helper.isInRectangle(rect, leftPoint))
                     {
                         // Console.WriteLine("left");
                         l.Add(leftPoint);
                     }
 
-                    if (isInBetween(a, b, rightPoint) && isInRectangle(rect, rightPoint))
+                    if (Helper.isInBetween(a, b, rightPoint) && Helper.isInRectangle(rect, rightPoint))
                     {
                         // Console.WriteLine("right");
                         l.Add(rightPoint);
                     }
 
-                    if (isInBetween(a, b, upperPoint) && isInRectangle(rect, upperPoint))
+                    if (Helper.isInBetween(a, b, upperPoint) && Helper.isInRectangle(rect, upperPoint))
                     {
                         // Console.WriteLine("upper");
                         l.Add(upperPoint);
                     }
 
-                    if (isInBetween(a, b, lowerPoint) && isInRectangle(rect, lowerPoint))
+                    if (Helper.isInBetween(a, b, lowerPoint) && Helper.isInRectangle(rect, lowerPoint))
                     {
                         // Console.WriteLine("lower");
                         l.Add(lowerPoint);
@@ -156,7 +242,7 @@ namespace ComputerGraphicsProject
 
                     var upperPoint = new Point(a.X, yMin);
                     var lowerPoint = new Point(a.X, yMax);
-                    if (!isInBetween(a, b, upperPoint))
+                    if (!Helper.isInBetween(a, b, upperPoint))
                         return;
                     a = upperPoint;
                     b = lowerPoint;
@@ -169,7 +255,7 @@ namespace ComputerGraphicsProject
                         return;
                     var leftPoint = new Point(xMin, a.Y);
                     var rightPoint = new Point(xMax, a.Y);
-                    if (!isInBetween(a, b, leftPoint))
+                    if (!Helper.isInBetween(a, b, leftPoint))
                         return;
                     a = leftPoint;
                     b = rightPoint;
@@ -191,25 +277,25 @@ namespace ComputerGraphicsProject
                     */
 
                     List<Point> l = new List<Point>();
-                    if (isInBetween(a, b, leftPoint) && isInRectangle(rect, leftPoint))
+                    if (Helper.isInBetween(a, b, leftPoint) && Helper.isInRectangle(rect, leftPoint))
                     {
                         // Console.WriteLine("left");
                         l.Add(leftPoint);
                     }
 
-                    if (isInBetween(a, b, rightPoint) && isInRectangle(rect, rightPoint))
+                    if (Helper.isInBetween(a, b, rightPoint) && Helper.isInRectangle(rect, rightPoint))
                     {
                         // Console.WriteLine("right");
                         l.Add(rightPoint);
                     }
 
-                    if (isInBetween(a, b, upperPoint) && isInRectangle(rect, upperPoint))
+                    if (Helper.isInBetween(a, b, upperPoint) && Helper.isInRectangle(rect, upperPoint))
                     {
                         // Console.WriteLine("upper");
                         l.Add(upperPoint);
                     }
 
-                    if (isInBetween(a, b, lowerPoint) && isInRectangle(rect, lowerPoint))
+                    if (Helper.isInBetween(a, b, lowerPoint) && Helper.isInRectangle(rect, lowerPoint))
                     {
                         // Console.WriteLine("lower");
                         l.Add(lowerPoint);
@@ -225,22 +311,6 @@ namespace ComputerGraphicsProject
                 }
 				points = Points();
 			}
-		}
-
-        private bool isInRectangle(Rectangle rect, Point p)
-        {
-            return p.X >= rect.X && p.X <= rect.X + rect.Width && p.Y >= rect.Y && p.Y <= rect.Y + rect.Height;
-        }
-
-        // 判断c是不是在有a，b构成的矩形中或直线上
-        private bool isInBetween(Point a, Point b, Point c)
-        {
-            // Console.WriteLine(string.Format("a: {0} b: {1} c: {2}", a.ToString(), b.ToString(), c.ToString()));
-            var maxX = Math.Max(a.X, b.X);
-            var minX = Math.Min(a.X, b.X);
-            var maxY = Math.Max(a.Y, b.Y);
-            var minY = Math.Min(a.Y, b.Y);
-            return c.X >= minX && c.X <= maxX && c.Y >= minY && c.Y <= maxY;
-        }
+		}  
     }
 }
