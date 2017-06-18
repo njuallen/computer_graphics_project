@@ -31,6 +31,11 @@ namespace ComputerGraphicsProject
 #endif
         }
 
+        public virtual void Translation(int dx, int dy)
+        {
+            Console.WriteLine("Function Translation not implemented!");
+        }
+
         public virtual List<Point> Points()
         {
             return new List<Point>();

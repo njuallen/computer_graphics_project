@@ -52,5 +52,17 @@ namespace ComputerGraphicsProject
             }
 			return l;
 		}
-	}
+
+        public override void Translation(int dx, int dy)
+        {
+            center.X += dx;
+            center.Y += dy;
+            var len = points.Count;
+            for (var i = 0; i < len; i++)
+            {
+                var p = new Point(points[i].X + dx, points[i].Y + dy);
+                points[i] = p;
+            }
+        }
+    }
 }

@@ -103,5 +103,22 @@ namespace ComputerGraphicsProject
             }
             vertices = result;
         }
+
+        public override void Translation(int dx, int dy)
+        {
+            var len = vertices.Count;
+            for(var i = 0; i < len; i++)
+            {
+                var p = new Point(vertices[i].X + dx, vertices[i].Y + dy);
+                vertices[i] = p;
+            }
+
+            len = points.Count;
+            for (var i = 0; i < len; i++)
+            {
+                var p = new Point(points[i].X + dx, points[i].Y + dy);
+                points[i] = p;
+            }
+        }
     }
 }

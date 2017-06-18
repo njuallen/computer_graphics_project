@@ -47,5 +47,36 @@ namespace ComputerGraphicsProject
                 result.Add(p);
             return result;
         }
+
+        public override void Translation(int dx, int dy)
+        {
+            var len = controlVertices.Count;
+            for (var i = 0; i < len; i++)
+            {
+                var p = new Point(controlVertices[i].X + dx, controlVertices[i].Y + dy);
+                controlVertices[i] = p;
+            }
+
+            len = controlPolygonPoints.Count;
+            for (var i = 0; i < len; i++)
+            {
+                var p = new Point(controlPolygonPoints[i].X + dx, controlPolygonPoints[i].Y + dy);
+                controlPolygonPoints[i] = p;
+            }
+
+            len = curvePoints.Count;
+            for (var i = 0; i < len; i++)
+            {
+                var p = new Point(curvePoints[i].X + dx, curvePoints[i].Y + dy);
+                curvePoints[i] = p;
+            }
+
+            len = points.Count;
+            for (var i = 0; i < len; i++)
+            {
+                var p = new Point(points[i].X + dx, points[i].Y + dy);
+                points[i] = p;
+            }
+        }
     }
 }

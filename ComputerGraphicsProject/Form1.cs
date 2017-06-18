@@ -46,6 +46,9 @@ namespace ComputerGraphicsProject
         bool isMouseDown = false;
         Point firstPoint;
 
+        // 被选中的图形
+        Primitive selected = null;
+
         string mode = "Bresenham";
 
         // 这个flag标识着屏幕上的某个位置是否有像素点
@@ -73,6 +76,7 @@ namespace ComputerGraphicsProject
                     if (l.Distance(point) <= 3.0)
                     {
                         l.isSelected = true;
+                        selected = l;
                         return;
                     }
                 }
@@ -81,6 +85,7 @@ namespace ComputerGraphicsProject
                     if (l.Distance(point) <= 3.0)
                     {
                         l.isSelected = true;
+                        selected = l;
                         return;
                     }
                 }
@@ -89,6 +94,7 @@ namespace ComputerGraphicsProject
                     if (l.Distance(point) <= 3.0)
                     {
                         l.isSelected = true;
+                        selected = l;
                         return;
                     }
                 }
@@ -97,6 +103,7 @@ namespace ComputerGraphicsProject
                     if (l.Distance(point) <= 3.0)
                     {
                         l.isSelected = true;
+                        selected = l;
                         return;
                     }
                 }
@@ -105,6 +112,7 @@ namespace ComputerGraphicsProject
                     if (l.Distance(point) <= 3.0)
                     {
                         l.isSelected = true;
+                        selected = l;
                         return;
                     }
                 }
@@ -113,6 +121,7 @@ namespace ComputerGraphicsProject
                     if (l.Distance(point) <= 3.0)
                     {
                         l.isSelected = true;
+                        selected = l;
                         return;
                     }
                 }
@@ -121,6 +130,7 @@ namespace ComputerGraphicsProject
                     if (l.Distance(point) <= 3.0)
                     {
                         l.isSelected = true;
+                        selected = l;
                         return;
                     }
                 }
@@ -164,59 +174,7 @@ namespace ComputerGraphicsProject
                 for (var j = 0; j < form_height; j++)
                     flag[i][j] = false;
 
-            var len = DDALines.Count;
-            for (var i = 0; i < len; i++)
-				if(DDALines[i].isSelected)
-					DDALines[i].Draw(e, selectionPen);
-				else
-					DDALines[i].Draw(e, drawingPen);
-
-            len = BresenhamLines.Count;
-            for (var i = 0; i < len; i++)
-				if(BresenhamLines[i].isSelected)
-					BresenhamLines[i].Draw(e, selectionPen);
-				else
-					BresenhamLines[i].Draw(e, drawingPen);
-
-            len = circles.Count;
-            for (var i = 0; i < len; i++)
-				if(circles[i].isSelected)
-					circles[i].Draw(e, selectionPen);
-				else
-					circles[i].Draw(e, drawingPen);
-
-            len = ellipses.Count;
-            for (var i = 0; i < len; i++)
-                if (ellipses[i].isSelected)
-					ellipses[i].Draw(e, selectionPen);
-				else
-					ellipses[i].Draw(e, drawingPen);
-
-            len = polygons.Count;
-            for (var i = 0; i < len; i++)
-                if (polygons[i].isSelected)
-                    polygons[i].Draw(e, selectionPen);
-                else
-                    polygons[i].Draw(e, drawingPen);
-
-            len = beziers.Count;
-            for (var i = 0; i < len; i++)
-                if (beziers[i].isSelected)
-                    beziers[i].Draw(e, selectionPen);
-                else
-                    beziers[i].Draw(e, drawingPen);
-
-            len = bsplines.Count;
-            for (var i = 0; i < len; i++)
-                if (bsplines[i].isSelected)
-                    bsplines[i].Draw(e, selectionPen);
-                else
-                    bsplines[i].Draw(e, drawingPen);
-
-            len = fill.Count;
-            for (var i = 0; i < len; i++)
-                fill[i].Draw(e, fillPen);
-
+            var len = 0;
             // show the one that the user is drawing
             // 如果是画多边形，我们就要先把顶点顺序连接
             // 如果是画样条曲线，我们就要先把控制顶点顺序连接
@@ -282,14 +240,148 @@ namespace ComputerGraphicsProject
                     trimmingPen.DashStyle = DashStyle.Dash;
                     e.Graphics.DrawRectangle(trimmingPen, rect);
                 }
+                else if(mode == "Translation")
+                {
+                    if (selected != null)
+                    {
+                        var dx = point.X - firstPoint.X;
+                        var dy = point.Y - firstPoint.Y;
+                        // 我们平移的量是这个时钟周期内的鼠标的移动量
+                        // 这一次移动好之后，图形就到新位置了
+                        // 下一次当然要从那个位置开始重新移动
+                        firstPoint = point;
+                        selected.Translation(dx, dy);
+                    }
+                }
             }
+
+            len = DDALines.Count;
+            for (var i = 0; i < len; i++)
+                if (DDALines[i].isSelected)
+                    DDALines[i].Draw(e, selectionPen);
+                else
+                    DDALines[i].Draw(e, drawingPen);
+
+            len = BresenhamLines.Count;
+            for (var i = 0; i < len; i++)
+                if (BresenhamLines[i].isSelected)
+                    BresenhamLines[i].Draw(e, selectionPen);
+                else
+                    BresenhamLines[i].Draw(e, drawingPen);
+
+            len = circles.Count;
+            for (var i = 0; i < len; i++)
+                if (circles[i].isSelected)
+                    circles[i].Draw(e, selectionPen);
+                else
+                    circles[i].Draw(e, drawingPen);
+
+            len = ellipses.Count;
+            for (var i = 0; i < len; i++)
+                if (ellipses[i].isSelected)
+                    ellipses[i].Draw(e, selectionPen);
+                else
+                    ellipses[i].Draw(e, drawingPen);
+
+            len = polygons.Count;
+            for (var i = 0; i < len; i++)
+                if (polygons[i].isSelected)
+                    polygons[i].Draw(e, selectionPen);
+                else
+                    polygons[i].Draw(e, drawingPen);
+
+            len = beziers.Count;
+            for (var i = 0; i < len; i++)
+                if (beziers[i].isSelected)
+                    beziers[i].Draw(e, selectionPen);
+                else
+                    beziers[i].Draw(e, drawingPen);
+
+            len = bsplines.Count;
+            for (var i = 0; i < len; i++)
+                if (bsplines[i].isSelected)
+                    bsplines[i].Draw(e, selectionPen);
+                else
+                    bsplines[i].Draw(e, drawingPen);
+
+            len = fill.Count;
+            for (var i = 0; i < len; i++)
+                fill[i].Draw(e, fillPen);
+
         }
-   
+
         private void Form1_MouseDown(object sender, MouseEventArgs e)
         {
             Point point = PointToClient(Cursor.Position);
             isMouseDown = true;
             firstPoint = point;
+            if(mode == "Translation")
+            {
+                // 距离鼠标位置距离小于3的图形被选中
+                foreach (var l in DDALines)
+                {
+                    if (l.Distance(point) <= 3.0)
+                    {
+                        l.isSelected = true;
+                        selected = l;
+                        return;
+                    }
+                }
+                foreach (var l in BresenhamLines)
+                {
+                    if (l.Distance(point) <= 3.0)
+                    {
+                        l.isSelected = true;
+                        selected = l;
+                        return;
+                    }
+                }
+                foreach (var l in circles)
+                {
+                    if (l.Distance(point) <= 3.0)
+                    {
+                        l.isSelected = true;
+                        selected = l;
+                        return;
+                    }
+                }
+                foreach (var l in ellipses)
+                {
+                    if (l.Distance(point) <= 3.0)
+                    {
+                        l.isSelected = true;
+                        selected = l;
+                        return;
+                    }
+                }
+                foreach (var l in polygons)
+                {
+                    if (l.Distance(point) <= 3.0)
+                    {
+                        l.isSelected = true;
+                        selected = l;
+                        return;
+                    }
+                }
+                foreach (var l in beziers)
+                {
+                    if (l.Distance(point) <= 3.0)
+                    {
+                        l.isSelected = true;
+                        selected = l;
+                        return;
+                    }
+                }
+                foreach (var l in bsplines)
+                {
+                    if (l.Distance(point) <= 3.0)
+                    {
+                        l.isSelected = true;
+                        selected = l;
+                        return;
+                    }
+                }
+            }
         }
 
         private void Form1_MouseUp(object sender, MouseEventArgs e)
@@ -342,6 +434,11 @@ namespace ComputerGraphicsProject
                 len = polygons.Count;
                 for (var i = 0; i < len; i++)
                     polygons[i].Trim(rect);
+            }
+            else if(mode == "Translation")
+            {
+                selected = null;
+                ClearPointerSelection();
             }
         }
 
@@ -418,6 +515,14 @@ namespace ComputerGraphicsProject
             mode = "Bspline";
         }
 
+        private void button11_Click(object sender, EventArgs e)
+        {
+            isMouseDown = false;
+            ClearPointerSelection();
+            // 平移
+            mode = "Translation";
+        }
+
         private void timer1_Tick(object sender, EventArgs e)
         {
             Refresh();
@@ -443,6 +548,7 @@ namespace ComputerGraphicsProject
         // 首先先清除上一次选中的图形的信息
         private void ClearPointerSelection()
         {
+            selected = null;
             foreach (var l in DDALines)
                 l.isSelected = false;
             foreach (var l in BresenhamLines)

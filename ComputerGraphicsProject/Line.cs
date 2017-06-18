@@ -312,5 +312,19 @@ namespace ComputerGraphicsProject
 				points = Points();
 			}
 		}  
+
+        public override void Translation(int dx, int dy)
+        {
+            a.X += dx;
+            a.Y += dy;
+            b.X += dx;
+            b.Y += dy;
+            var len = points.Count;
+            for (var i = 0; i < len; i++)
+            {
+                var p = new Point(points[i].X + dx, points[i].Y + dy);
+                points[i] = p;
+            }
+        }
     }
 }
