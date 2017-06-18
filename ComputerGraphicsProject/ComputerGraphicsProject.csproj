@@ -52,6 +52,7 @@
     <Compile Include="Bezier.cs" />
     <Compile Include="Block.cs" />
     <Compile Include="BresenhamLine.cs" />
+    <Compile Include="Bspline.cs" />
     <Compile Include="Circle.cs" />
     <Compile Include="DDALine.cs" />
     <Compile Include="Ellipse.cs" />

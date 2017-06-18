@@ -39,6 +39,7 @@ namespace ComputerGraphicsProject
         // 填充的块
         List<Block> fill = new List<Block>();
         List<Bezier> beziers = new List<Bezier>();
+        List<Bspline> bsplines = new List<Bspline>();
 
         List<Point> vertices = new List<Point>();
 
@@ -107,19 +108,31 @@ namespace ComputerGraphicsProject
                         return;
                     }
                 }
+                foreach (var l in beziers)
+                {
+                    if (l.Distance(point) <= 3.0)
+                    {
+                        l.isSelected = true;
+                        return;
+                    }
+                }
+                foreach (var l in bsplines)
+                {
+                    if (l.Distance(point) <= 3.0)
+                    {
+                        l.isSelected = true;
+                        return;
+                    }
+                }
             }
             else if(mode == "Fill")
             {
                 var block = new Block(point);
                 fill.Add(block);
             }
-            else if(mode == "Polygon")
+            else if(mode == "Polygon" || mode == "Bezier" || mode == "Bspline")
             {
                 // 将当前点加入到多边形的顶点序列中
-                vertices.Add(point);
-            }
-            else if(mode == "Bezier")
-            {
                 vertices.Add(point);
             }
             else
@@ -193,13 +206,22 @@ namespace ComputerGraphicsProject
                 else
                     beziers[i].Draw(e, drawingPen);
 
+            len = bsplines.Count;
+            for (var i = 0; i < len; i++)
+                if (bsplines[i].isSelected)
+                    bsplines[i].Draw(e, selectionPen);
+                else
+                    bsplines[i].Draw(e, drawingPen);
+
             len = fill.Count;
             for (var i = 0; i < len; i++)
                 fill[i].Draw(e, fillPen);
 
             // show the one that the user is drawing
+            // 如果是画多边形，我们就要先把顶点顺序连接
+            // 如果是画样条曲线，我们就要先把控制顶点顺序连接
             var point = PointToClient(Cursor.Position);
-            if(mode == "Polygon" || mode == "Bezier")
+            if(mode == "Polygon" || mode == "Bezier" || mode == "Bspline")
             {
                 len = vertices.Count;
                 for(var i = 0; i < len - 1; i++)
@@ -388,6 +410,14 @@ namespace ComputerGraphicsProject
             mode = "Bezier";
         }
 
+        private void button10_Click(object sender, EventArgs e)
+        {
+            isMouseDown = false;
+            ClearPointerSelection();
+            // B样条曲线
+            mode = "Bspline";
+        }
+
         private void timer1_Tick(object sender, EventArgs e)
         {
             Refresh();
@@ -423,6 +453,10 @@ namespace ComputerGraphicsProject
                 l.isSelected = false;
             foreach (var l in polygons)
                 l.isSelected = false;
+            foreach (var l in beziers)
+                l.isSelected = false;
+            foreach (var l in bsplines)
+                l.isSelected = false;
         }
 
         private void Form1_DoubleClick(object sender, EventArgs e)
@@ -443,6 +477,13 @@ namespace ComputerGraphicsProject
                 var point = PointToClient(Cursor.Position);
                 vertices.Add(point);
                 beziers.Add(new Bezier(vertices));
+                vertices.Clear();
+            }
+            else if(mode == "Bspline")
+            {
+                var point = PointToClient(Cursor.Position);
+                vertices.Add(point);
+                bsplines.Add(new Bspline(vertices));
                 vertices.Clear();
             }
         }
