@@ -68,12 +68,7 @@ namespace ComputerGraphicsProject
         public override void Rotate(Point c, double sin, double cos)
         {
             center = Helper.Rotate(c, center, sin, cos);
-            var len = points.Count;
-            for (var i = 0; i < len; i++)
-            {
-                var p = Helper.Rotate(c, points[i], sin, cos);
-                points[i] = p;
-            }
+            points = Points();
         }
     }
 }

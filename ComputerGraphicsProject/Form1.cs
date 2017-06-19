@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 using System.Windows.Forms;
 
 namespace ComputerGraphicsProject
@@ -521,7 +522,8 @@ namespace ComputerGraphicsProject
         {
             isMouseDown = false;
             ClearPointerSelection();
-            mode = "Pointer";
+            // When user clicks button, show the dialog.
+            saveFileDialog1.ShowDialog();
         }
 
         private void button6_Click_1(object sender, EventArgs e)
@@ -646,6 +648,39 @@ namespace ComputerGraphicsProject
                 vertices.Add(point);
                 bsplines.Add(new Bspline(vertices));
                 vertices.Clear();
+            }
+        }
+
+        private void saveFileDialog1_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            // Get file name.
+            var name = saveFileDialog1.FileName;
+            Console.WriteLine(name);
+
+            var format = ImageFormat.Jpeg;
+
+            switch (saveFileDialog1.FilterIndex)
+            {
+                case 1:
+                    format = ImageFormat.Jpeg;
+                    break;
+
+                case 2:
+                    format = ImageFormat.Bmp;
+                    break;
+
+                case 3:
+                    format = ImageFormat.Png;
+                    break;
+            }
+            if (name != "")
+            {
+                // 我们截屏不要把第一行的button给截进去
+                using (var bmp = new Bitmap(form_width, form_height))
+                {
+                    DrawToBitmap(bmp, new Rectangle(0, 0, bmp.Width, bmp.Height));
+                    bmp.Save(name, format);
+                }
             }
         }
     }
