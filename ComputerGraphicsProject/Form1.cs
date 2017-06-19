@@ -433,6 +433,26 @@ namespace ComputerGraphicsProject
             mode = "Scale";
         }
 
+        private void button14_Click(object sender, EventArgs e)
+        {
+            // 清屏
+            isMouseDown = false;
+            ClearPointerSelection();
+            firstPoint.X = -1;
+            firstPoint.Y = -1;
+            prevPoint.X = -1;
+            prevPoint.Y = -1;
+            selected = null;
+            totalScaleFactor = 1.0;
+            ClearPointerSelection();
+            vertices.Clear();
+            // 将记录的所有图形删除掉
+            graphics.Clear();
+            mode = "Clearing";
+            // 在进行refresh的时候，屏幕就被清空了，同时flag数组也会被清空
+            Refresh();
+        }
+
         private void timer1_Tick(object sender, EventArgs e)
         {
             // Refresh();
@@ -529,5 +549,7 @@ namespace ComputerGraphicsProject
         {
             Refresh();
         }
+
+      
     }
 }

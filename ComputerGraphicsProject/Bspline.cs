@@ -11,60 +11,47 @@ namespace ComputerGraphicsProject
         }
 
         private List<double> knotVector;
+
         public override List<Point> GetCurvePoints()
-        {
-            var result = new List<Point>();
-           
-            // p ： 阶数
-            // 我们选取p的阶数为4
-            var p = 4;
+		{
+			var result = new List<Point>();
 
-            // n + 1: 控制节点的个数
-            var n = controlVertices.Count  - 1;
-            // m = n + p + 1 来源：http://give.zju.edu.cn/cgcourse/new/book/8.4.htm
-            var m = n + p + 1;
-            // 我们采用均匀B样条
-            // u就是所谓的节点矢量
-            knotVector = new List<double>();
-            // m + 1： 节点矢量的个数
-            for (var i = 0; i < m + 1; i++)
-            {
-                knotVector.Add(i * 1.0 / m);
-            }
+			var numPoints = controlVertices.Count;
+			var samplePoints = 1000;
+			var numSegments = numPoints - 3;
 
-            Console.WriteLine("knotVector");
-            foreach (var a in knotVector)
-                Console.Write(string.Format("{0} ", a));
-            Console.WriteLine("");
+			for(int start_cv = 0, j = 0;j < numSegments; j++, start_cv++) 
+			{ 
+				// for each section of curve, draw samplePoints number of divisions 
+				for(int i = 0;i != samplePoints; i++) { 
+					// use the parametric time value 0 to 1 for this curve 
+					// segment. 
+					double t = (double)i / samplePoints; 
+					// the t value inverted 
+					double it = 1.0 - t;
+					// calculate blending functions for cubic bspline 
+					double b0 = it * it * it / 6.0; 
+					double b1 = (3 * t * t * t - 6 * t * t + 4) / 6.0; 
+					double b2 = (-3 * t * t * t + 3 * t * t + 3 * t + 1) / 6.0; 
+					double b3 = t * t * t / 6.0; 
+					// calculate the x,y and z of the curve point 
+					double x = b0 * GetPoint(start_cv + 0).X + 
+						b1 * GetPoint(start_cv + 1).X + 
+						b2 * GetPoint(start_cv + 2).X + 
+						b3 * GetPoint(start_cv + 3).X; 
+					double y = b0 * GetPoint(start_cv + 0).Y + 
+						b1 * GetPoint(start_cv + 1).Y + 
+						b2 * GetPoint(start_cv + 2).Y + 
+						b3 * GetPoint(start_cv + 3).Y ; 
+					// specify the point 
+					result.Add(new Point(Convert.ToInt32(x), Convert.ToInt32(y)));
+				} 
+			} 
+			return result;
+		}
 
-            Console.WriteLine("controlVertices");
-            foreach (var a in controlVertices)
-                Console.Write(string.Format("{0} ", a.ToString()));
-            Console.WriteLine("");
 
-            Console.WriteLine("n: {0} p: {1} m: {2}", n, p, m);
-
-            var samplePoints = 10000;
-            double step = 1.0 / samplePoints;
-            for (var i = 0; i < samplePoints; i++)
-            {
-                // Console.WriteLine("****************");
-                var u = step * i;
-               
-                double x = 0.0, y = 0.0;
-                for (var j = 0; j <= n; j++)
-                {
-                    double weight = CoxdeBoorRecursion(u, j, p);
-                    x += weight * controlVertices[j].X;
-                    y += weight * controlVertices[j].Y;
-                }
-                result.Add(new Point(Convert.ToInt32(x), Convert.ToInt32(y)));
-            }
-            result = Helper.RemoveDuplicatedPoint(result);
-            return result;
-        }
-
-        
+        /*
         // Cox-de Boor recursion formula
         private double CoxdeBoorRecursion(double u, int i, int p)
         {
@@ -87,9 +74,22 @@ namespace ComputerGraphicsProject
             // Console.WriteLine(string.Format("N({0}, {1}, {2:F8}) = {3:F8}", i, p, u, result));
             return result;
         }
+        */
+
+        // 获取第i个control vertex
+        private Point GetPoint(int i)
+        {
+            var len = controlVertices.Count;
+            if (i < 0)
+                return controlVertices[0];
+            if (i >= len)
+                return controlVertices[len - 1];
+            return controlVertices[i];
+        }
 
         /*
-        // using De Boor's Algorithm 
+        // using De Boor's Algorithm
+        // Buggy 
         private Point DeBoor(double u, int p)
         {
             var len = knotVector.Count;
@@ -100,7 +100,7 @@ namespace ComputerGraphicsProject
                 if (u == knotVector[i])
                 {
                     k = i;
-                    s = 1;
+                    s = 0;
                     break;
                 }
                 else if (u > knotVector[i] && u < knotVector[i + 1])
@@ -114,6 +114,7 @@ namespace ComputerGraphicsProject
                     continue;
             }
             var h = p - s;
+
             List<List<Point>> array = new List<List<Point>>();
             for (var i = 0; i < h + 1; i++)
             {
@@ -123,12 +124,13 @@ namespace ComputerGraphicsProject
                 array.Add(l);
             }
 
+            // Console.WriteLine("k: {0}, p :{1} h:{2} s:{3}", k, p, h, s);
+
             for (var i = 0; i < h + 1; i++)
             {
                 // 由于我们故意将最开始的p个knot设置为区间长度为0的，且从0.0开始
                 // 所以我们这边的k一定大于p
-                Console.WriteLine(string.Format("k: {0}, p :{1} i:{2}", k, p, i));
-                var tmp = new Point(controlVertices[k - p + i].X, controlVertices[k - p + i].Y);
+                var tmp = new Point(GetPoint(k - p + i).X, GetPoint(k - p + i).Y);
                 array[0][i] = tmp;
             }
 
@@ -143,6 +145,7 @@ namespace ComputerGraphicsProject
                     y += weight * array[r - 1][i].Y;
                     array[r][i] = new Point(Convert.ToInt32(x), Convert.ToInt32(y));
                 }
+            Console.WriteLine("k: {0}, p :{1} h:{2} s:{3}", k, p, h, s);
             return array[p - s][k - s];
         }
         */
