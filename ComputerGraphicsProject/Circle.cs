@@ -14,6 +14,7 @@ namespace ComputerGraphicsProject
 		private int radius;
 		public Circle(Point c, int r)
 		{
+            graphicType = "Circle";
 			center = c;
 			radius = r;
             points = Points();

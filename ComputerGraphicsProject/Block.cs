@@ -11,6 +11,7 @@ namespace ComputerGraphicsProject
         private Point p;
         public Block(Point c)
         {
+            graphicType = "Block";
             p = c;
             // 此时，一系列点指的是色块内部的点
             points = Points();

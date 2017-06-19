@@ -13,6 +13,9 @@ namespace ComputerGraphicsProject
         public bool isSelected = false;
         // 这个图元边界上的点
         protected List<Point> points;
+        
+        // 指明这个图形的类型
+        public string graphicType;
 
         public virtual void Draw(PaintEventArgs e, Pen pen)
         {
@@ -65,6 +68,11 @@ namespace ComputerGraphicsProject
                     minDistance = currDistance;
             }
             return minDistance;
+        }
+
+        public virtual void Trim(Rectangle rect)
+        {
+
         }
     }
 }

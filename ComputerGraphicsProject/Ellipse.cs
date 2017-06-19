@@ -14,6 +14,7 @@ namespace ComputerGraphicsProject
 		private int rx, ry;
 		public Ellipse(Point c, int x, int y)
 		{
+            graphicType = "Ellipse";
 			center = c;
 			rx = x;
 			ry = y;

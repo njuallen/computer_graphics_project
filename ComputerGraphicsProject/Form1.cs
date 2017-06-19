@@ -31,16 +31,7 @@ namespace ComputerGraphicsProject
     
         static int form_width = 800;
         static int form_height = 600;
-
-        List<DDALine> DDALines = new List<DDALine>();
-        List<BresenhamLine> BresenhamLines = new List<BresenhamLine>();
-        List<Circle> circles = new List<Circle>();
-        List<Ellipse> ellipses = new List<Ellipse>();
-        List<Polygon> polygons = new List<Polygon>();
-        // 填充的块
-        List<Block> fill = new List<Block>();
-        List<Bezier> beziers = new List<Bezier>();
-        List<Bspline> bsplines = new List<Bspline>();
+        List<Primitive> graphics = new List<Primitive>();
 
         List<Point> vertices = new List<Point>();
 
@@ -74,7 +65,7 @@ namespace ComputerGraphicsProject
             if (mode == "Fill")
             {
                 var block = new Block(point);
-                fill.Add(block);
+                graphics.Add(block);
             }
             else if (mode == "Polygon" || mode == "Bezier" || mode == "Bspline")
             {
@@ -114,6 +105,7 @@ namespace ComputerGraphicsProject
                     flag[i][j] = false;
 
             var len = 0;
+            
             // show the one that the user is drawing
             // 如果是画多边形，我们就要先把顶点顺序连接
             // 如果是画样条曲线，我们就要先把控制顶点顺序连接
@@ -256,58 +248,14 @@ namespace ComputerGraphicsProject
                     }
                 }
             }
-            len = DDALines.Count;
-            for (var i = 0; i < len; i++)
-                if (DDALines[i].isSelected)
-                    DDALines[i].Draw(e, selectionPen);
-                else
-                    DDALines[i].Draw(e, drawingPen);
 
-            len = BresenhamLines.Count;
+            // 显示已经画好的图形
+            len = graphics.Count;
             for (var i = 0; i < len; i++)
-                if (BresenhamLines[i].isSelected)
-                    BresenhamLines[i].Draw(e, selectionPen);
+                if (graphics[i].isSelected)
+                    graphics[i].Draw(e, selectionPen);
                 else
-                    BresenhamLines[i].Draw(e, drawingPen);
-
-            len = circles.Count;
-            for (var i = 0; i < len; i++)
-                if (circles[i].isSelected)
-                    circles[i].Draw(e, selectionPen);
-                else
-                    circles[i].Draw(e, drawingPen);
-
-            len = ellipses.Count;
-            for (var i = 0; i < len; i++)
-                if (ellipses[i].isSelected)
-                    ellipses[i].Draw(e, selectionPen);
-                else
-                    ellipses[i].Draw(e, drawingPen);
-
-            len = polygons.Count;
-            for (var i = 0; i < len; i++)
-                if (polygons[i].isSelected)
-                    polygons[i].Draw(e, selectionPen);
-                else
-                    polygons[i].Draw(e, drawingPen);
-
-            len = beziers.Count;
-            for (var i = 0; i < len; i++)
-                if (beziers[i].isSelected)
-                    beziers[i].Draw(e, selectionPen);
-                else
-                    beziers[i].Draw(e, drawingPen);
-
-            len = bsplines.Count;
-            for (var i = 0; i < len; i++)
-                if (bsplines[i].isSelected)
-                    bsplines[i].Draw(e, selectionPen);
-                else
-                    bsplines[i].Draw(e, drawingPen);
-
-            len = fill.Count;
-            for (var i = 0; i < len; i++)
-                fill[i].Draw(e, fillPen);
+                    graphics[i].Draw(e, drawingPen);
         }
 
         private void Form1_MouseDown(object sender, MouseEventArgs e)
@@ -315,64 +263,12 @@ namespace ComputerGraphicsProject
             Point point = PointToClient(Cursor.Position);
             isMouseDown = true;
             firstPoint = point;
-            if(mode == "Translation" || mode == "Rotate" || mode == "Scale")
+
+            // 这个三个操作需要选中图形
+            // 距离鼠标位置距离小于3的图形被选中
+            if (mode == "Translation" || mode == "Rotate" || mode == "Scale")
             {
-                // 距离鼠标位置距离小于3的图形被选中
-                foreach (var l in DDALines)
-                {
-                    if (l.Distance(point) <= 3.0)
-                    {
-                        l.isSelected = true;
-                        selected = l;
-                        return;
-                    }
-                }
-                foreach (var l in BresenhamLines)
-                {
-                    if (l.Distance(point) <= 3.0)
-                    {
-                        l.isSelected = true;
-                        selected = l;
-                        return;
-                    }
-                }
-                foreach (var l in circles)
-                {
-                    if (l.Distance(point) <= 3.0)
-                    {
-                        l.isSelected = true;
-                        selected = l;
-                        return;
-                    }
-                }
-                foreach (var l in ellipses)
-                {
-                    if (l.Distance(point) <= 3.0)
-                    {
-                        l.isSelected = true;
-                        selected = l;
-                        return;
-                    }
-                }
-                foreach (var l in polygons)
-                {
-                    if (l.Distance(point) <= 3.0)
-                    {
-                        l.isSelected = true;
-                        selected = l;
-                        return;
-                    }
-                }
-                foreach (var l in beziers)
-                {
-                    if (l.Distance(point) <= 3.0)
-                    {
-                        l.isSelected = true;
-                        selected = l;
-                        return;
-                    }
-                }
-                foreach (var l in bsplines)
+                foreach (var l in graphics)
                 {
                     if (l.Distance(point) <= 3.0)
                     {
@@ -391,18 +287,18 @@ namespace ComputerGraphicsProject
          
 			if (mode == "DDA")
 			{
-                DDALines.Add(new DDALine(firstPoint, point));
+                graphics.Add(new DDALine(firstPoint, point));
             }
 			else if (mode == "Bresenham")
 			{
-				BresenhamLines.Add(new BresenhamLine(firstPoint, point));
+				graphics.Add(new BresenhamLine(firstPoint, point));
 			}
 			else if (mode == "Circle")
 			{
 				int dx = point.X - firstPoint.X;
 				int dy = point.Y - firstPoint.Y;
 				int distance = (int)Math.Sqrt(dx * dx + dy * dy);
-				circles.Add(new Circle(firstPoint, distance));
+				graphics.Add(new Circle(firstPoint, distance));
 			}
 			else if(mode == "Ellipse")
 			{
@@ -412,7 +308,7 @@ namespace ComputerGraphicsProject
 				var x = Math.Abs((firstPoint.X - point.X) / 2);
 				// y轴长度
 				var y = Math.Abs((firstPoint.Y - point.Y) / 2);
-				ellipses.Add(new Ellipse(center, x, y));
+				graphics.Add(new Ellipse(center, x, y));
 			}
             else if(mode == "Trimming")
             {
@@ -423,17 +319,9 @@ namespace ComputerGraphicsProject
                 var minY = Math.Min(firstPoint.Y, point.Y);
                 Rectangle rect = new Rectangle(minX, minY, width, height);
                 // 将直线和多边形都裁剪一遍
-                var len = DDALines.Count;
-                for (var i = 0; i < len; i++)
-                    DDALines[i].Trim(rect);
-
-                len = BresenhamLines.Count;
-                for (var i = 0; i < len; i++)
-                    BresenhamLines[i].Trim(rect);
-
-                len = polygons.Count;
-                for (var i = 0; i < len; i++)
-                    polygons[i].Trim(rect);
+                foreach(var g in graphics)
+                    if(g.graphicType == "Line" || g.graphicType == "Polygon")
+                        g.Trim(rect);
             }
             else if(mode == "Translation" || mode == "Rotate" || mode == "Scale")
             {
@@ -571,20 +459,8 @@ namespace ComputerGraphicsProject
         private void ClearPointerSelection()
         {
             selected = null;
-            foreach (var l in DDALines)
-                l.isSelected = false;
-            foreach (var l in BresenhamLines)
-                l.isSelected = false;
-            foreach (var l in circles)
-                l.isSelected = false;
-            foreach (var l in ellipses)
-                l.isSelected = false;
-            foreach (var l in polygons)
-                l.isSelected = false;
-            foreach (var l in beziers)
-                l.isSelected = false;
-            foreach (var l in bsplines)
-                l.isSelected = false;
+            foreach (var g in graphics)
+                g.isSelected = false;
         }
 
         private void Form1_DoubleClick(object sender, EventArgs e)
@@ -595,7 +471,7 @@ namespace ComputerGraphicsProject
                 // 首先先将当前点加入到多边形的顶点序列中，作为最后一个点
                 var point = PointToClient(Cursor.Position);
                 vertices.Add(point);
-                polygons.Add(new Polygon(vertices));
+                graphics.Add(new Polygon(vertices));
                 vertices.Clear();
             }
             else if(mode == "Bezier")
@@ -604,14 +480,14 @@ namespace ComputerGraphicsProject
                 // 首先先将当前点加入到多边形的顶点序列中，作为最后一个点
                 var point = PointToClient(Cursor.Position);
                 vertices.Add(point);
-                beziers.Add(new Bezier(vertices));
+                graphics.Add(new Bezier(vertices));
                 vertices.Clear();
             }
             else if(mode == "Bspline")
             {
                 var point = PointToClient(Cursor.Position);
                 vertices.Add(point);
-                bsplines.Add(new Bspline(vertices));
+                graphics.Add(new Bspline(vertices));
                 vertices.Clear();
             }
         }

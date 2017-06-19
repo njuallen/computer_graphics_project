@@ -9,6 +9,7 @@ namespace ComputerGraphicsProject
         protected Point a, b;
         public Line(Point pa, Point pb)
         {
+            graphicType = "Line";
             // a is on the left, b is on the right
             if (pa.X < pb.X)
             {
@@ -111,7 +112,7 @@ namespace ComputerGraphicsProject
         // 利用矩形rect对线段进行裁剪
         // 如果线段有部分在矩形内部，则只保留那部分
         // 如果线段完全在矩形内部或者完全在矩形外部， 则不变
-        public void Trim(Rectangle rect)
+        public override void Trim(Rectangle rect)
 		{
 			bool aInRect = Helper.IsInRectangle(rect, a);
 			bool bInRect = Helper.IsInRectangle(rect, b);

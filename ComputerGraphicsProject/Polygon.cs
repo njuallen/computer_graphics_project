@@ -11,6 +11,7 @@ namespace ComputerGraphicsProject
         private List<Point> vertices;
         public Polygon(List<Point> lp)
         {
+            graphicType = "Polygon";
             // 由于我们的多边形在构造时是单击记录一个顶点
             // 最后一个顶点是以双击来记录的
             // 但是这样子经常会导致最后一个点被记录两次，具体原因我还没搞清楚
@@ -34,7 +35,7 @@ namespace ComputerGraphicsProject
             return l;
         }
 
-        public void Trim(Rectangle rect)
+        public override void Trim(Rectangle rect)
         {
             // 先使用左侧边框
             // Console.WriteLine("Left");

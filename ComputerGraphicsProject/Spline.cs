@@ -18,6 +18,7 @@ namespace ComputerGraphicsProject
         // 输入control vertices
         public Spline(List<Point> lp)
         {
+            graphicType = "Spline";
             controlVertices = Helper.RemoveDuplicatedPoint(lp);
             points = Points();
         }
