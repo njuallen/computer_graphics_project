@@ -326,5 +326,14 @@ namespace ComputerGraphicsProject
                 points[i] = p;
             }
         }
+
+        public override void Rotate(Point c, double sin, double cos)
+        {
+            // 对于旋转，我们只旋转端点，其他线段上的点重新计算
+            // 因为在旋转过程中由于浮点到整数的大量rounding，线段会很快变形
+            a = Helper.Rotate(c, a, sin, cos);
+            b = Helper.Rotate(c, b, sin, cos);
+            points = Points();
+        }
     }
 }

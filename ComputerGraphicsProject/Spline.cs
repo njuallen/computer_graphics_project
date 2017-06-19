@@ -78,5 +78,18 @@ namespace ComputerGraphicsProject
                 points[i] = p;
             }
         }
+
+        public override void Rotate(Point center, double sin, double cos)
+        {
+            // 只旋转控制节点
+            var len = controlVertices.Count;
+            for (var i = 0; i < len; i++)
+            {
+                var p = Helper.Rotate(center, controlVertices[i], sin, cos);
+                controlVertices[i] = p;
+            }
+            controlVertices = Helper.RemoveDuplicatedPoint(controlVertices);
+            points = Points();
+        }
     }
 }

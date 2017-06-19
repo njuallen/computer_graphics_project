@@ -36,6 +36,11 @@ namespace ComputerGraphicsProject
             Console.WriteLine("Function Translation not implemented!");
         }
 
+        public virtual void Rotate(Point center, double sin, double cos)
+        {
+            Console.WriteLine("Function Rotate not implemented!");
+        }
+
         public virtual List<Point> Points()
         {
             return new List<Point>();

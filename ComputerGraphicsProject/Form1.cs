@@ -45,6 +45,7 @@ namespace ComputerGraphicsProject
 
         bool isMouseDown = false;
         Point firstPoint;
+        Point prevPoint;
 
         // 被选中的图形
         Primitive selected = null;
@@ -253,6 +254,49 @@ namespace ComputerGraphicsProject
                         selected.Translation(dx, dy);
                     }
                 }
+                else if(mode == "Rotate")
+                {
+                    if (selected != null)
+                    {
+                        // 我们是如何计算旋转角度的呢？
+                        // 鼠标最开始的位置为a
+                        // 之后先后记录鼠标位置，连续两次次所在点分别为b, c
+                        // 则角度为ac与ab的夹角
+                        if (prevPoint.X != -1)
+                        {
+                            // 两个向量p1与p2
+                            // p1即ab(firstPoint->prevPoint)
+                            // p2即ac(firstPoint->point)
+                            var p1X = prevPoint.X - firstPoint.X;
+                            var p1Y = prevPoint.Y - firstPoint.Y;
+                            var p2X = point.X - firstPoint.X;
+                            var p2Y = point.Y - firstPoint.Y;
+                            double dotProduct = p1X * p2X + p1Y * p2Y;
+                            // 计算夹角的cos
+                            double cos = dotProduct / 
+                                (Math.Sqrt(p1X * p1X + p1Y * p1Y) * Math.Sqrt(p2X * p2X + p2Y * p2Y));
+
+                            // 如何确定从p1到p2旋转角是正还是负呢？
+                            // 来自博客：http://www.cnblogs.com/lancidie/archive/2010/05/05/1728122.html
+                            // 关于叉乘符号与向量的角度方向关系，请参考《算法导论》，我只给出结论:
+                            // p1* p2 = x1y2 - x2y1 = -p2 * p1
+                            // If p1 *p2 is positive, 
+                            // then p1 is clockwise from p2 with respect to the origin(0, 0); 
+                            // if this cross product is negative, 
+                            // then p1 is counterclockwise from p2.
+                            var crossProduct = p1X * p2Y - p2X * p1Y;
+                           
+                            double sin = Math.Sqrt(1 - cos * cos);
+                            if (crossProduct < 0)
+                                sin = -sin;
+                            if (!Double.IsNaN(sin) && !Double.IsNaN(cos))
+                            {
+                                selected.Rotate(firstPoint, sin, cos);
+                            }
+                        }
+                        prevPoint = point;
+                    }
+                }
             }
 
             len = DDALines.Count;
@@ -307,7 +351,6 @@ namespace ComputerGraphicsProject
             len = fill.Count;
             for (var i = 0; i < len; i++)
                 fill[i].Draw(e, fillPen);
-
         }
 
         private void Form1_MouseDown(object sender, MouseEventArgs e)
@@ -315,7 +358,7 @@ namespace ComputerGraphicsProject
             Point point = PointToClient(Cursor.Position);
             isMouseDown = true;
             firstPoint = point;
-            if(mode == "Translation")
+            if(mode == "Translation" || mode == "Rotate")
             {
                 // 距离鼠标位置距离小于3的图形被选中
                 foreach (var l in DDALines)
@@ -435,8 +478,12 @@ namespace ComputerGraphicsProject
                 for (var i = 0; i < len; i++)
                     polygons[i].Trim(rect);
             }
-            else if(mode == "Translation")
+            else if(mode == "Translation" || mode == "Rotate")
             {
+                firstPoint.X = -1;
+                firstPoint.Y = -1;
+                prevPoint.X = -1;
+                prevPoint.Y = -1;
                 selected = null;
                 ClearPointerSelection();
             }
@@ -523,6 +570,14 @@ namespace ComputerGraphicsProject
             mode = "Translation";
         }
 
+        private void button12_Click(object sender, EventArgs e)
+        {
+            isMouseDown = false;
+            ClearPointerSelection();
+            // 旋转
+            mode = "Rotate";
+        }
+
         private void timer1_Tick(object sender, EventArgs e)
         {
             Refresh();
@@ -530,7 +585,7 @@ namespace ComputerGraphicsProject
 
         static public void DrawPoint(PaintEventArgs e, Pen pen, int x, int y)
         {
-            if (x >= 0 && x < form_width && y >= 60 && y < form_height)
+            if (x >= 0 && x < form_width && y >= 40 && y < form_height)
             {
                 flag[x][y] = true;
                 Rectangle rect = new Rectangle(x, y, 1, 1);
@@ -542,7 +597,7 @@ namespace ComputerGraphicsProject
         // 画布的范围是不包括button的空白位置
         static public bool CheckOnCanvas(int x, int y)
         {
-            return x >= 0 && x < form_width && y >= 60 && y < form_height;
+            return x >= 0 && x < form_width && y >= 40 && y < form_height;
         }
 
         // 首先先清除上一次选中的图形的信息
