@@ -70,5 +70,13 @@ namespace ComputerGraphicsProject
             center = Helper.Rotate(c, center, sin, cos);
             points = Points();
         }
+
+
+        public override void Scale(Point c, double scaleFactor)
+        {
+            center = Helper.Scale(c, center, scaleFactor);
+            radius = Convert.ToInt32(radius * scaleFactor);
+            points = Points();
+        }
     }
 }

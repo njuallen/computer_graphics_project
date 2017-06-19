@@ -23,7 +23,7 @@ namespace ComputerGraphicsProject
             List<Point> l = new List<Point>();
 
             Queue<Point> q = new Queue<Point>();
-            Form1.flag[p.X][p.Y] = true;
+            画图.flag[p.X][p.Y] = true;
             q.Enqueue(p);
             while (q.Count > 0)
             {
@@ -32,24 +32,24 @@ namespace ComputerGraphicsProject
                 var y = p.Y;
                 l.Add(p);
                 // 使用四邻域扩充
-                if (Form1.CheckOnCanvas(x + 1, y) && !Form1.flag[x + 1][y])
+                if (画图.CheckOnCanvas(x + 1, y) && !画图.flag[x + 1][y])
                 {
-                    Form1.flag[x + 1][y] = true;
+                    画图.flag[x + 1][y] = true;
                     q.Enqueue(new Point(x + 1, y));
                 }
-                if (Form1.CheckOnCanvas(x - 1, y) && !Form1.flag[x - 1][y])
+                if (画图.CheckOnCanvas(x - 1, y) && !画图.flag[x - 1][y])
                 {
-                    Form1.flag[x - 1][y] = true;
+                    画图.flag[x - 1][y] = true;
                     q.Enqueue(new Point(x - 1, y));
                 }
-                if (Form1.CheckOnCanvas(x, y + 1) && !Form1.flag[x][y + 1])
+                if (画图.CheckOnCanvas(x, y + 1) && !画图.flag[x][y + 1])
                 {
-                    Form1.flag[x][y + 1] = true;
+                    画图.flag[x][y + 1] = true;
                     q.Enqueue(new Point(x, y + 1));
                 }
-                if (Form1.CheckOnCanvas(x, y - 1) && !Form1.flag[x][y - 1])
+                if (画图.CheckOnCanvas(x, y - 1) && !画图.flag[x][y - 1])
                 {
-                    Form1.flag[x][y - 1] = true;
+                    画图.flag[x][y - 1] = true;
                     q.Enqueue(new Point(x, y - 1));
                 }
             }

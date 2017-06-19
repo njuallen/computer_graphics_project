@@ -103,16 +103,14 @@ namespace ComputerGraphicsProject
                 points[i] = p;
             }
         }
+        // we do not support rotating ellipse
 
-        public override void Rotate(Point c, double sin, double cos)
+        public override void Scale(Point c, double scaleFactor)
         {
-            center = Helper.Rotate(c, center, sin, cos);
-            var len = points.Count;
-            for (var i = 0; i < len; i++)
-            {
-                var p = Helper.Rotate(c, points[i], sin, cos);
-                points[i] = p;
-            }
+            center = Helper.Scale(c, center, scaleFactor);
+            rx = Convert.ToInt32(rx * scaleFactor);
+            ry = Convert.ToInt32(ry * scaleFactor);
+            points = Points();
         }
     }
 }

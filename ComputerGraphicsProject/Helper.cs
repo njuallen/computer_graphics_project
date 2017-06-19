@@ -53,15 +53,18 @@ namespace ComputerGraphicsProject
             // 先转到原点系中
             var x = a.X - center.X;
             var y = a.Y - center.Y;
-            
-            /*
-            Console.WriteLine("x:{0} y:{1} Sin:{2} Cos:{3} newX:{4} newY:{5}", 
-                x, y, sin, cos,
-                x * cos - y * sin, 
-                x * sin + y * cos);
-                */
             double newX = x * cos - y * sin;
             double newY = x * sin + y * cos;
+            return new Point(Convert.ToInt32(center.X + newX), Convert.ToInt32(center.Y + newY));
+        }
+
+        public static Point Scale(Point center, Point a, double scaleFactor)
+        {
+            // 先转到原点系中
+            var x = a.X - center.X;
+            var y = a.Y - center.Y;
+            double newX = x * scaleFactor;
+            double newY = y * scaleFactor;
             return new Point(Convert.ToInt32(center.X + newX), Convert.ToInt32(center.Y + newY));
         }
     }

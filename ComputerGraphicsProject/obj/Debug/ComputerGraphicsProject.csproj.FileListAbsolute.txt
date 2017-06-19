@@ -2,8 +2,8 @@ c:\users\allen\documents\visual studio 2015\Projects\ComputerGraphicsProject\Com
 c:\users\allen\documents\visual studio 2015\Projects\ComputerGraphicsProject\ComputerGraphicsProject\bin\Debug\ComputerGraphicsProject.exe
 c:\users\allen\documents\visual studio 2015\Projects\ComputerGraphicsProject\ComputerGraphicsProject\bin\Debug\ComputerGraphicsProject.pdb
 c:\users\allen\documents\visual studio 2015\Projects\ComputerGraphicsProject\ComputerGraphicsProject\obj\Debug\ComputerGraphicsProject.csprojResolveAssemblyReference.cache
-c:\users\allen\documents\visual studio 2015\Projects\ComputerGraphicsProject\ComputerGraphicsProject\obj\Debug\ComputerGraphicsProject.Form1.resources
 c:\users\allen\documents\visual studio 2015\Projects\ComputerGraphicsProject\ComputerGraphicsProject\obj\Debug\ComputerGraphicsProject.Properties.Resources.resources
 c:\users\allen\documents\visual studio 2015\Projects\ComputerGraphicsProject\ComputerGraphicsProject\obj\Debug\ComputerGraphicsProject.csproj.GenerateResource.Cache
 c:\users\allen\documents\visual studio 2015\Projects\ComputerGraphicsProject\ComputerGraphicsProject\obj\Debug\ComputerGraphicsProject.exe
 c:\users\allen\documents\visual studio 2015\Projects\ComputerGraphicsProject\ComputerGraphicsProject\obj\Debug\ComputerGraphicsProject.pdb
+C:\Users\allen\Documents\Visual Studio 2015\Projects\ComputerGraphicsProject\ComputerGraphicsProject\obj\Debug\ComputerGraphicsProject.画图.resources

@@ -335,5 +335,12 @@ namespace ComputerGraphicsProject
             b = Helper.Rotate(c, b, sin, cos);
             points = Points();
         }
+
+        public override void Scale(Point center, double scaleFactor)
+        {
+            a = Helper.Scale(center, a, scaleFactor);
+            b = Helper.Scale(center, b, scaleFactor);
+            points = Points();
+        }
     }
 }

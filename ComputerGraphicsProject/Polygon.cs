@@ -128,5 +128,17 @@ namespace ComputerGraphicsProject
             vertices = Helper.RemoveDuplicatedPoint(vertices);
             points = Points();
         }
+
+
+        public override void Scale(Point center, double scaleFactor)
+        {
+            var len = vertices.Count;
+            for (var i = 0; i < len; i++)
+            {
+                var p = Helper.Scale(center, vertices[i], scaleFactor);
+                vertices[i] = p;
+            }
+            points = Points();
+        }
     }
 }

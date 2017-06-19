@@ -24,7 +24,7 @@ namespace ComputerGraphicsProject
 #if MYDEBUG
                 Console.WriteLine(p.ToString());
 #endif
-                Form1.DrawPoint(e, pen, p.X, p.Y);
+                画图.DrawPoint(e, pen, p.X, p.Y);
             }
 #if MYDEBUG
             Console.WriteLine("*************************************");
@@ -39,6 +39,11 @@ namespace ComputerGraphicsProject
         public virtual void Rotate(Point center, double sin, double cos)
         {
             Console.WriteLine("Function Rotate not implemented!");
+        }
+
+        public virtual void Scale(Point center, double scaleFactor)
+        {
+            Console.WriteLine("Function Scale not implemented!");
         }
 
         public virtual List<Point> Points()

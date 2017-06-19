@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace ComputerGraphicsProject
 {
-    public partial class Form1 : Form
+    public partial class 画图 : Form
     {
-        public Form1()
+        public 画图()
         {
             InitializeComponent();
         }
@@ -28,7 +28,7 @@ namespace ComputerGraphicsProject
                 flag.Add(l);
             }
         }
-
+    
         static int form_width = 800;
         static int form_height = 600;
 
@@ -70,79 +70,13 @@ namespace ComputerGraphicsProject
         {
             ClearPointerSelection();
             var point = PointToClient(Cursor.Position);
-            if (mode == "Pointer")
-            {
-                // 距离鼠标位置距离小于3的图形被选中
-                foreach (var l in DDALines)
-                {
-                    if (l.Distance(point) <= 3.0)
-                    {
-                        l.isSelected = true;
-                        selected = l;
-                        return;
-                    }
-                }
-                foreach (var l in BresenhamLines)
-                {
-                    if (l.Distance(point) <= 3.0)
-                    {
-                        l.isSelected = true;
-                        selected = l;
-                        return;
-                    }
-                }
-                foreach (var l in circles)
-                {
-                    if (l.Distance(point) <= 3.0)
-                    {
-                        l.isSelected = true;
-                        selected = l;
-                        return;
-                    }
-                }
-                foreach (var l in ellipses)
-                {
-                    if (l.Distance(point) <= 3.0)
-                    {
-                        l.isSelected = true;
-                        selected = l;
-                        return;
-                    }
-                }
-                foreach (var l in polygons)
-                {
-                    if (l.Distance(point) <= 3.0)
-                    {
-                        l.isSelected = true;
-                        selected = l;
-                        return;
-                    }
-                }
-                foreach (var l in beziers)
-                {
-                    if (l.Distance(point) <= 3.0)
-                    {
-                        l.isSelected = true;
-                        selected = l;
-                        return;
-                    }
-                }
-                foreach (var l in bsplines)
-                {
-                    if (l.Distance(point) <= 3.0)
-                    {
-                        l.isSelected = true;
-                        selected = l;
-                        return;
-                    }
-                }
-            }
-            else if(mode == "Fill")
+            
+            if (mode == "Fill")
             {
                 var block = new Block(point);
                 fill.Add(block);
             }
-            else if(mode == "Polygon" || mode == "Bezier" || mode == "Bspline")
+            else if (mode == "Polygon" || mode == "Bezier" || mode == "Bspline")
             {
                 // 将当前点加入到多边形的顶点序列中
                 vertices.Add(point);
@@ -152,6 +86,9 @@ namespace ComputerGraphicsProject
 
             }
         }
+
+        // 这个变量记录的是指定图形累计被scale了多少
+        double totalScaleFactor = 1.0;
 
         private void Form1_Paint(object sender, PaintEventArgs e)
         {
@@ -181,15 +118,15 @@ namespace ComputerGraphicsProject
             // 如果是画多边形，我们就要先把顶点顺序连接
             // 如果是画样条曲线，我们就要先把控制顶点顺序连接
             var point = PointToClient(Cursor.Position);
-            if(mode == "Polygon" || mode == "Bezier" || mode == "Bspline")
+            if (mode == "Polygon" || mode == "Bezier" || mode == "Bspline")
             {
                 len = vertices.Count;
-                for(var i = 0; i < len - 1; i++)
+                for (var i = 0; i < len - 1; i++)
                 {
                     var line = new BresenhamLine(vertices[i], vertices[i + 1]);
                     line.Draw(e, currPen);
                 }
-                if(len > 0)
+                if (len > 0)
                 {
                     var line = new BresenhamLine(vertices[len - 1], point);
                     line.Draw(e, currPen);
@@ -229,7 +166,6 @@ namespace ComputerGraphicsProject
                 }
                 else if (mode == "Trimming")
                 {
-                    
                     // 裁剪所用的矩形
                     var width = Math.Abs(firstPoint.X - point.X);
                     var height = Math.Abs(firstPoint.Y - point.Y);
@@ -242,7 +178,7 @@ namespace ComputerGraphicsProject
                     trimmingPen.DashStyle = DashStyle.Dash;
                     e.Graphics.DrawRectangle(trimmingPen, rect);
                 }
-                else if(mode == "Translation")
+                else if (mode == "Translation")
                 {
                     if (selected != null)
                     {
@@ -255,7 +191,7 @@ namespace ComputerGraphicsProject
                         selected.Translation(dx, dy);
                     }
                 }
-                else if(mode == "Rotate")
+                else if (mode == "Rotate")
                 {
                     if (selected != null)
                     {
@@ -274,7 +210,7 @@ namespace ComputerGraphicsProject
                             var p2Y = point.Y - firstPoint.Y;
                             double dotProduct = p1X * p2X + p1Y * p2Y;
                             // 计算夹角的cos
-                            double cos = dotProduct / 
+                            double cos = dotProduct /
                                 (Math.Sqrt(p1X * p1X + p1Y * p1Y) * Math.Sqrt(p2X * p2X + p2Y * p2Y));
 
                             // 如何确定从p1到p2旋转角是正还是负呢？
@@ -286,7 +222,7 @@ namespace ComputerGraphicsProject
                             // if this cross product is negative, 
                             // then p1 is counterclockwise from p2.
                             var crossProduct = p1X * p2Y - p2X * p1Y;
-                           
+
                             double sin = Math.Sqrt(1 - cos * cos);
                             if (crossProduct < 0)
                                 sin = -sin;
@@ -297,9 +233,29 @@ namespace ComputerGraphicsProject
                         }
                         prevPoint = point;
                     }
+
+                }
+                else if (mode == "Scale")
+                {
+                    if (selected != null)
+                    {
+                        var dx = point.X - firstPoint.X;
+                        var dy = point.Y - firstPoint.Y;
+
+                        // scaleFactor即我们这一次应该在上一次的基础上再scale多少
+                        // scaleFactor的度量是以当前所在点到初始点的距离 / 10.0
+                        double scaleFactor = Math.Sqrt(dx * dx + dy * dy) / 10.0;
+                        // 由于我们之前已经缩放的比例是totalScaleFactor
+                        // 所以在此基础上，我们只要再缩放这么多
+                        scaleFactor /= totalScaleFactor;
+                        if (!Double.IsNaN(scaleFactor) && !Double.IsInfinity(scaleFactor))
+                        {
+                            selected.Scale(firstPoint, scaleFactor);
+                            totalScaleFactor *= scaleFactor;
+                        }
+                    }
                 }
             }
-
             len = DDALines.Count;
             for (var i = 0; i < len; i++)
                 if (DDALines[i].isSelected)
@@ -359,7 +315,7 @@ namespace ComputerGraphicsProject
             Point point = PointToClient(Cursor.Position);
             isMouseDown = true;
             firstPoint = point;
-            if(mode == "Translation" || mode == "Rotate")
+            if(mode == "Translation" || mode == "Rotate" || mode == "Scale")
             {
                 // 距离鼠标位置距离小于3的图形被选中
                 foreach (var l in DDALines)
@@ -479,13 +435,14 @@ namespace ComputerGraphicsProject
                 for (var i = 0; i < len; i++)
                     polygons[i].Trim(rect);
             }
-            else if(mode == "Translation" || mode == "Rotate")
+            else if(mode == "Translation" || mode == "Rotate" || mode == "Scale")
             {
                 firstPoint.X = -1;
                 firstPoint.Y = -1;
                 prevPoint.X = -1;
                 prevPoint.Y = -1;
                 selected = null;
+                totalScaleFactor = 1.0;
                 ClearPointerSelection();
             }
         }
@@ -580,9 +537,17 @@ namespace ComputerGraphicsProject
             mode = "Rotate";
         }
 
+        private void button13_Click(object sender, EventArgs e)
+        {
+            isMouseDown = false;
+            ClearPointerSelection();
+            // 缩放
+            mode = "Scale";
+        }
+
         private void timer1_Tick(object sender, EventArgs e)
         {
-            Refresh();
+            // Refresh();
         }
 
         static public void DrawPoint(PaintEventArgs e, Pen pen, int x, int y)
@@ -682,6 +647,11 @@ namespace ComputerGraphicsProject
                     bmp.Save(name, format);
                 }
             }
+        }
+
+        private void 画图_MouseMove(object sender, MouseEventArgs e)
+        {
+            Refresh();
         }
     }
 }
