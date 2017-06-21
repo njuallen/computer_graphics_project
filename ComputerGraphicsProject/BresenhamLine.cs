@@ -6,8 +6,9 @@ namespace ComputerGraphicsProject
 {
     class BresenhamLine : Line
     {
-        public BresenhamLine(Point pa, Point pb) : base(pa, pb)
+        public BresenhamLine(Point pa, Point pb, FormPaint form) : base(pa, pb)
         {
+            f = form;
             points = Points();
         }
 

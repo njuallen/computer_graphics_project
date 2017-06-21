@@ -12,8 +12,9 @@ namespace ComputerGraphicsProject
 	{
 		private Point center;
 		private int rx, ry;
-		public Ellipse(Point c, int x, int y)
+		public Ellipse(Point c, int x, int y, FormPaint form)
 		{
+            f = form;
             graphicType = "Ellipse";
 			center = c;
 			rx = x;

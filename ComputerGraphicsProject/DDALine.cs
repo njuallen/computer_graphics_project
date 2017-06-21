@@ -6,8 +6,9 @@ namespace ComputerGraphicsProject
 {
     class DDALine : Line
     {
-        public DDALine(Point pa, Point pb) : base(pa, pb)
+        public DDALine(Point pa, Point pb, FormPaint form) : base(pa, pb)
         {
+            f = form;
             points = Points();
         }
 

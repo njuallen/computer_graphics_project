@@ -1,6 +1,6 @@
 ﻿namespace ComputerGraphicsProject
 {
-    partial class 画图
+    partial class FormPaint
     {
         /// <summary>
         /// Required designer variable.
@@ -28,151 +28,146 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(画图));
-            this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.button8 = new System.Windows.Forms.Button();
-            this.button7 = new System.Windows.Forms.Button();
-            this.button6 = new System.Windows.Forms.Button();
-            this.button5 = new System.Windows.Forms.Button();
-            this.button4 = new System.Windows.Forms.Button();
-            this.button3 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
-            this.button9 = new System.Windows.Forms.Button();
-            this.button10 = new System.Windows.Forms.Button();
-            this.button11 = new System.Windows.Forms.Button();
-            this.button12 = new System.Windows.Forms.Button();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormPaint));
+            this.buttonTrimming = new System.Windows.Forms.Button();
+            this.buttonPolygon = new System.Windows.Forms.Button();
+            this.buttonFill = new System.Windows.Forms.Button();
+            this.buttonSave = new System.Windows.Forms.Button();
+            this.buttonEllipse = new System.Windows.Forms.Button();
+            this.buttonCircle = new System.Windows.Forms.Button();
+            this.buttonDDA = new System.Windows.Forms.Button();
+            this.buttonBresenham = new System.Windows.Forms.Button();
+            this.buttonBezier = new System.Windows.Forms.Button();
+            this.buttonBspline = new System.Windows.Forms.Button();
+            this.buttonTranslation = new System.Windows.Forms.Button();
+            this.buttonRotate = new System.Windows.Forms.Button();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
-            this.button13 = new System.Windows.Forms.Button();
-            this.button14 = new System.Windows.Forms.Button();
+            this.buttonScale = new System.Windows.Forms.Button();
+            this.buttonClearing = new System.Windows.Forms.Button();
+            this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
+            this.button1 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
-            // timer1
+            // buttonTrimming
             // 
-            this.timer1.Enabled = true;
-            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            this.buttonTrimming.Image = ((System.Drawing.Image)(resources.GetObject("buttonTrimming.Image")));
+            this.buttonTrimming.Location = new System.Drawing.Point(360, 0);
+            this.buttonTrimming.Name = "buttonTrimming";
+            this.buttonTrimming.Size = new System.Drawing.Size(40, 40);
+            this.buttonTrimming.TabIndex = 7;
+            this.buttonTrimming.UseVisualStyleBackColor = true;
+            this.buttonTrimming.Click += new System.EventHandler(this.buttonTrimming_Click);
             // 
-            // button8
+            // buttonPolygon
             // 
-            this.button8.Image = ((System.Drawing.Image)(resources.GetObject("button8.Image")));
-            this.button8.Location = new System.Drawing.Point(360, 0);
-            this.button8.Name = "button8";
-            this.button8.Size = new System.Drawing.Size(40, 40);
-            this.button8.TabIndex = 7;
-            this.button8.UseVisualStyleBackColor = true;
-            this.button8.Click += new System.EventHandler(this.button8_Click);
+            this.buttonPolygon.Image = ((System.Drawing.Image)(resources.GetObject("buttonPolygon.Image")));
+            this.buttonPolygon.Location = new System.Drawing.Point(240, 0);
+            this.buttonPolygon.Name = "buttonPolygon";
+            this.buttonPolygon.Size = new System.Drawing.Size(40, 40);
+            this.buttonPolygon.TabIndex = 6;
+            this.buttonPolygon.UseVisualStyleBackColor = true;
+            this.buttonPolygon.Click += new System.EventHandler(this.buttonPolygon_Click);
             // 
-            // button7
+            // buttonFill
             // 
-            this.button7.Image = ((System.Drawing.Image)(resources.GetObject("button7.Image")));
-            this.button7.Location = new System.Drawing.Point(240, 0);
-            this.button7.Name = "button7";
-            this.button7.Size = new System.Drawing.Size(40, 40);
-            this.button7.TabIndex = 6;
-            this.button7.UseVisualStyleBackColor = true;
-            this.button7.Click += new System.EventHandler(this.button7_Click);
+            this.buttonFill.Image = ((System.Drawing.Image)(resources.GetObject("buttonFill.Image")));
+            this.buttonFill.Location = new System.Drawing.Point(400, 0);
+            this.buttonFill.Name = "buttonFill";
+            this.buttonFill.Size = new System.Drawing.Size(40, 40);
+            this.buttonFill.TabIndex = 5;
+            this.buttonFill.UseVisualStyleBackColor = true;
+            this.buttonFill.Click += new System.EventHandler(this.buttonFill_Click);
             // 
-            // button6
+            // buttonSave
             // 
-            this.button6.Image = ((System.Drawing.Image)(resources.GetObject("button6.Image")));
-            this.button6.Location = new System.Drawing.Point(400, 0);
-            this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(40, 40);
-            this.button6.TabIndex = 5;
-            this.button6.UseVisualStyleBackColor = true;
-            this.button6.Click += new System.EventHandler(this.button6_Click_1);
+            this.buttonSave.Image = ((System.Drawing.Image)(resources.GetObject("buttonSave.Image")));
+            this.buttonSave.Location = new System.Drawing.Point(0, 0);
+            this.buttonSave.Name = "buttonSave";
+            this.buttonSave.Size = new System.Drawing.Size(40, 40);
+            this.buttonSave.TabIndex = 4;
+            this.buttonSave.UseVisualStyleBackColor = true;
+            this.buttonSave.Click += new System.EventHandler(this.buttonSave_Click);
             // 
-            // button5
+            // buttonEllipse
             // 
-            this.button5.Image = ((System.Drawing.Image)(resources.GetObject("button5.Image")));
-            this.button5.Location = new System.Drawing.Point(0, 0);
-            this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(40, 40);
-            this.button5.TabIndex = 4;
-            this.button5.UseVisualStyleBackColor = true;
-            this.button5.Click += new System.EventHandler(this.button5_Click);
+            this.buttonEllipse.Image = ((System.Drawing.Image)(resources.GetObject("buttonEllipse.Image")));
+            this.buttonEllipse.Location = new System.Drawing.Point(200, 0);
+            this.buttonEllipse.Name = "buttonEllipse";
+            this.buttonEllipse.Size = new System.Drawing.Size(40, 40);
+            this.buttonEllipse.TabIndex = 3;
+            this.buttonEllipse.UseVisualStyleBackColor = true;
+            this.buttonEllipse.Click += new System.EventHandler(this.buttonEllipse_Click);
             // 
-            // button4
+            // buttonCircle
             // 
-            this.button4.Image = ((System.Drawing.Image)(resources.GetObject("button4.Image")));
-            this.button4.Location = new System.Drawing.Point(200, 0);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(40, 40);
-            this.button4.TabIndex = 3;
-            this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.button4_Click);
+            this.buttonCircle.Image = ((System.Drawing.Image)(resources.GetObject("buttonCircle.Image")));
+            this.buttonCircle.Location = new System.Drawing.Point(160, 0);
+            this.buttonCircle.Name = "buttonCircle";
+            this.buttonCircle.Size = new System.Drawing.Size(40, 40);
+            this.buttonCircle.TabIndex = 2;
+            this.buttonCircle.UseVisualStyleBackColor = true;
+            this.buttonCircle.Click += new System.EventHandler(this.buttonCircle_Click);
             // 
-            // button3
+            // buttonDDA
             // 
-            this.button3.Image = ((System.Drawing.Image)(resources.GetObject("button3.Image")));
-            this.button3.Location = new System.Drawing.Point(160, 0);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(40, 40);
-            this.button3.TabIndex = 2;
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.buttonDDA.Image = ((System.Drawing.Image)(resources.GetObject("buttonDDA.Image")));
+            this.buttonDDA.Location = new System.Drawing.Point(80, 0);
+            this.buttonDDA.Name = "buttonDDA";
+            this.buttonDDA.Size = new System.Drawing.Size(40, 40);
+            this.buttonDDA.TabIndex = 1;
+            this.buttonDDA.UseVisualStyleBackColor = true;
+            this.buttonDDA.Click += new System.EventHandler(this.buttonDDA_Click);
             // 
-            // button2
+            // buttonBresenham
             // 
-            this.button2.Image = ((System.Drawing.Image)(resources.GetObject("button2.Image")));
-            this.button2.Location = new System.Drawing.Point(80, 0);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(40, 40);
-            this.button2.TabIndex = 1;
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.buttonBresenham.Cursor = System.Windows.Forms.Cursors.Default;
+            this.buttonBresenham.Image = ((System.Drawing.Image)(resources.GetObject("buttonBresenham.Image")));
+            this.buttonBresenham.Location = new System.Drawing.Point(120, 0);
+            this.buttonBresenham.Name = "buttonBresenham";
+            this.buttonBresenham.Size = new System.Drawing.Size(40, 40);
+            this.buttonBresenham.TabIndex = 0;
+            this.buttonBresenham.UseVisualStyleBackColor = true;
+            this.buttonBresenham.Click += new System.EventHandler(this.buttonBresenham_Click);
             // 
-            // button1
+            // buttonBezier
             // 
-            this.button1.Cursor = System.Windows.Forms.Cursors.Default;
-            this.button1.Image = ((System.Drawing.Image)(resources.GetObject("button1.Image")));
-            this.button1.Location = new System.Drawing.Point(120, 0);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(40, 40);
-            this.button1.TabIndex = 0;
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.buttonBezier.Image = ((System.Drawing.Image)(resources.GetObject("buttonBezier.Image")));
+            this.buttonBezier.Location = new System.Drawing.Point(280, 0);
+            this.buttonBezier.Name = "buttonBezier";
+            this.buttonBezier.Size = new System.Drawing.Size(40, 40);
+            this.buttonBezier.TabIndex = 8;
+            this.buttonBezier.UseVisualStyleBackColor = true;
+            this.buttonBezier.Click += new System.EventHandler(this.buttonBezier_Click);
             // 
-            // button9
+            // buttonBspline
             // 
-            this.button9.Image = ((System.Drawing.Image)(resources.GetObject("button9.Image")));
-            this.button9.Location = new System.Drawing.Point(280, 0);
-            this.button9.Name = "button9";
-            this.button9.Size = new System.Drawing.Size(40, 40);
-            this.button9.TabIndex = 8;
-            this.button9.UseVisualStyleBackColor = true;
-            this.button9.Click += new System.EventHandler(this.button9_Click);
+            this.buttonBspline.Image = ((System.Drawing.Image)(resources.GetObject("buttonBspline.Image")));
+            this.buttonBspline.Location = new System.Drawing.Point(320, 0);
+            this.buttonBspline.Name = "buttonBspline";
+            this.buttonBspline.Size = new System.Drawing.Size(40, 40);
+            this.buttonBspline.TabIndex = 9;
+            this.buttonBspline.UseVisualStyleBackColor = true;
+            this.buttonBspline.Click += new System.EventHandler(this.buttonBspline_Click);
             // 
-            // button10
+            // buttonTranslation
             // 
-            this.button10.Image = ((System.Drawing.Image)(resources.GetObject("button10.Image")));
-            this.button10.Location = new System.Drawing.Point(320, 0);
-            this.button10.Name = "button10";
-            this.button10.Size = new System.Drawing.Size(40, 40);
-            this.button10.TabIndex = 9;
-            this.button10.UseVisualStyleBackColor = true;
-            this.button10.Click += new System.EventHandler(this.button10_Click);
+            this.buttonTranslation.Image = ((System.Drawing.Image)(resources.GetObject("buttonTranslation.Image")));
+            this.buttonTranslation.Location = new System.Drawing.Point(440, 0);
+            this.buttonTranslation.Name = "buttonTranslation";
+            this.buttonTranslation.Size = new System.Drawing.Size(40, 40);
+            this.buttonTranslation.TabIndex = 10;
+            this.buttonTranslation.UseVisualStyleBackColor = true;
+            this.buttonTranslation.Click += new System.EventHandler(this.buttonTranslation_Click);
             // 
-            // button11
+            // buttonRotate
             // 
-            this.button11.Image = ((System.Drawing.Image)(resources.GetObject("button11.Image")));
-            this.button11.Location = new System.Drawing.Point(440, 0);
-            this.button11.Name = "button11";
-            this.button11.Size = new System.Drawing.Size(40, 40);
-            this.button11.TabIndex = 10;
-            this.button11.UseVisualStyleBackColor = true;
-            this.button11.Click += new System.EventHandler(this.button11_Click);
-            // 
-            // button12
-            // 
-            this.button12.Image = ((System.Drawing.Image)(resources.GetObject("button12.Image")));
-            this.button12.Location = new System.Drawing.Point(480, 0);
-            this.button12.Name = "button12";
-            this.button12.Size = new System.Drawing.Size(40, 40);
-            this.button12.TabIndex = 11;
-            this.button12.UseVisualStyleBackColor = true;
-            this.button12.Click += new System.EventHandler(this.button12_Click);
+            this.buttonRotate.Image = ((System.Drawing.Image)(resources.GetObject("buttonRotate.Image")));
+            this.buttonRotate.Location = new System.Drawing.Point(480, 0);
+            this.buttonRotate.Name = "buttonRotate";
+            this.buttonRotate.Size = new System.Drawing.Size(40, 40);
+            this.buttonRotate.TabIndex = 11;
+            this.buttonRotate.UseVisualStyleBackColor = true;
+            this.buttonRotate.Click += new System.EventHandler(this.buttonRotate_Click);
             // 
             // saveFileDialog1
             // 
@@ -182,80 +177,97 @@
             this.saveFileDialog1.Title = "保存图片";
             this.saveFileDialog1.FileOk += new System.ComponentModel.CancelEventHandler(this.saveFileDialog1_FileOk);
             // 
-            // button13
+            // buttonScale
             // 
-            this.button13.Image = ((System.Drawing.Image)(resources.GetObject("button13.Image")));
-            this.button13.Location = new System.Drawing.Point(520, 0);
-            this.button13.Name = "button13";
-            this.button13.Size = new System.Drawing.Size(40, 40);
-            this.button13.TabIndex = 12;
-            this.button13.UseVisualStyleBackColor = true;
-            this.button13.Click += new System.EventHandler(this.button13_Click);
+            this.buttonScale.Image = ((System.Drawing.Image)(resources.GetObject("buttonScale.Image")));
+            this.buttonScale.Location = new System.Drawing.Point(520, 0);
+            this.buttonScale.Name = "buttonScale";
+            this.buttonScale.Size = new System.Drawing.Size(40, 40);
+            this.buttonScale.TabIndex = 12;
+            this.buttonScale.UseVisualStyleBackColor = true;
+            this.buttonScale.Click += new System.EventHandler(this.buttonScale_Click);
             // 
-            // button14
+            // buttonClearing
             // 
-            this.button14.Image = ((System.Drawing.Image)(resources.GetObject("button14.Image")));
-            this.button14.Location = new System.Drawing.Point(40, 0);
-            this.button14.Name = "button14";
-            this.button14.Size = new System.Drawing.Size(40, 40);
-            this.button14.TabIndex = 13;
-            this.button14.UseVisualStyleBackColor = true;
-            this.button14.Click += new System.EventHandler(this.button14_Click);
+            this.buttonClearing.Image = ((System.Drawing.Image)(resources.GetObject("buttonClearing.Image")));
+            this.buttonClearing.Location = new System.Drawing.Point(40, 0);
+            this.buttonClearing.Name = "buttonClearing";
+            this.buttonClearing.Size = new System.Drawing.Size(40, 40);
+            this.buttonClearing.TabIndex = 13;
+            this.buttonClearing.UseVisualStyleBackColor = true;
+            this.buttonClearing.Click += new System.EventHandler(this.buttonClearing_Click);
             // 
-            // 画图
+            // backgroundWorker1
+            // 
+            this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork);
+            // 
+            // button1
+            // 
+            this.button1.Image = ((System.Drawing.Image)(resources.GetObject("button1.Image")));
+            this.button1.Location = new System.Drawing.Point(560, 0);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(40, 40);
+            this.button1.TabIndex = 14;
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // FormPaint
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.BackColor = System.Drawing.Color.Gray;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.ClientSize = new System.Drawing.Size(784, 561);
-            this.Controls.Add(this.button14);
-            this.Controls.Add(this.button13);
-            this.Controls.Add(this.button12);
-            this.Controls.Add(this.button11);
-            this.Controls.Add(this.button10);
-            this.Controls.Add(this.button9);
-            this.Controls.Add(this.button8);
-            this.Controls.Add(this.button7);
-            this.Controls.Add(this.button6);
-            this.Controls.Add(this.button5);
-            this.Controls.Add(this.button4);
-            this.Controls.Add(this.button3);
-            this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
+            this.Controls.Add(this.buttonClearing);
+            this.Controls.Add(this.buttonScale);
+            this.Controls.Add(this.buttonRotate);
+            this.Controls.Add(this.buttonTranslation);
+            this.Controls.Add(this.buttonBspline);
+            this.Controls.Add(this.buttonBezier);
+            this.Controls.Add(this.buttonTrimming);
+            this.Controls.Add(this.buttonPolygon);
+            this.Controls.Add(this.buttonFill);
+            this.Controls.Add(this.buttonSave);
+            this.Controls.Add(this.buttonEllipse);
+            this.Controls.Add(this.buttonCircle);
+            this.Controls.Add(this.buttonDDA);
+            this.Controls.Add(this.buttonBresenham);
+            this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "画图";
-            this.Text = "Form1";
+            this.Name = "FormPaint";
+            this.Text = "画图";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.Form1_Paint);
             this.DoubleClick += new System.EventHandler(this.Form1_DoubleClick);
             this.MouseClick += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseClick);
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseDown);
-            this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.画图_MouseMove);
+            this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseMove);
             this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseUp);
             this.ResumeLayout(false);
 
         }
 
         #endregion
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.Button button3;
-        private System.Windows.Forms.Button button4;
-        private System.Windows.Forms.Button button5;
-        private System.Windows.Forms.Timer timer1;
-        private System.Windows.Forms.Button button6;
-        private System.Windows.Forms.Button button7;
-        private System.Windows.Forms.Button button8;
-        private System.Windows.Forms.Button button9;
-        private System.Windows.Forms.Button button10;
-        private System.Windows.Forms.Button button11;
-        private System.Windows.Forms.Button button12;
+        private System.Windows.Forms.Button buttonBresenham;
+        private System.Windows.Forms.Button buttonDDA;
+        private System.Windows.Forms.Button buttonCircle;
+        private System.Windows.Forms.Button buttonEllipse;
+        private System.Windows.Forms.Button buttonSave;
+        private System.Windows.Forms.Button buttonFill;
+        private System.Windows.Forms.Button buttonPolygon;
+        private System.Windows.Forms.Button buttonTrimming;
+        private System.Windows.Forms.Button buttonBezier;
+        private System.Windows.Forms.Button buttonBspline;
+        private System.Windows.Forms.Button buttonTranslation;
+        private System.Windows.Forms.Button buttonRotate;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
-        private System.Windows.Forms.Button button13;
-        private System.Windows.Forms.Button button14;
+        private System.Windows.Forms.Button buttonScale;
+        private System.Windows.Forms.Button buttonClearing;
+        private System.ComponentModel.BackgroundWorker backgroundWorker1;
+        private System.Windows.Forms.Button button1;
     }
 }
 

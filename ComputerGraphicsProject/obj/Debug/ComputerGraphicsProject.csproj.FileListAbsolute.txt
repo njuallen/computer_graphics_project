@@ -6,4 +6,4 @@ c:\users\allen\documents\visual studio 2015\Projects\ComputerGraphicsProject\Com
 c:\users\allen\documents\visual studio 2015\Projects\ComputerGraphicsProject\ComputerGraphicsProject\obj\Debug\ComputerGraphicsProject.csproj.GenerateResource.Cache
 c:\users\allen\documents\visual studio 2015\Projects\ComputerGraphicsProject\ComputerGraphicsProject\obj\Debug\ComputerGraphicsProject.exe
 c:\users\allen\documents\visual studio 2015\Projects\ComputerGraphicsProject\ComputerGraphicsProject\obj\Debug\ComputerGraphicsProject.pdb
-C:\Users\allen\Documents\Visual Studio 2015\Projects\ComputerGraphicsProject\ComputerGraphicsProject\obj\Debug\ComputerGraphicsProject.画图.resources
+C:\Users\allen\Documents\Visual Studio 2015\Projects\ComputerGraphicsProject\ComputerGraphicsProject\obj\Debug\ComputerGraphicsProject.FormPaint.resources

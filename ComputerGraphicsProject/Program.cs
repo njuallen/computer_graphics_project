@@ -16,7 +16,7 @@ namespace ComputerGraphicsProject
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new 画图());
+            Application.Run(new FormPaint());
         }
     }
 }

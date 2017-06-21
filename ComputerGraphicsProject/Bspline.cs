@@ -6,8 +6,9 @@ namespace ComputerGraphicsProject
 {
     class Bspline : Spline
     {
-        public Bspline(List<Point> lp) : base(lp)
+        public Bspline(List<Point> lp, FormPaint form) : base(lp)
         {
+            f = form;
         }
 
         private List<double> knotVector;

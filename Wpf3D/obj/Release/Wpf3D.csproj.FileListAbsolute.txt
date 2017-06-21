@@ -1,0 +1,14 @@
+C:\Users\allen\Documents\Visual Studio 2015\Projects\ComputerGraphicsProject\Wpf3D\bin\Release\Wpf3D.exe.config
+C:\Users\allen\Documents\Visual Studio 2015\Projects\ComputerGraphicsProject\Wpf3D\bin\Release\Wpf3D.exe
+C:\Users\allen\Documents\Visual Studio 2015\Projects\ComputerGraphicsProject\Wpf3D\bin\Release\Wpf3D.pdb
+C:\Users\allen\Documents\Visual Studio 2015\Projects\ComputerGraphicsProject\Wpf3D\obj\Release\Wpf3D.csprojResolveAssemblyReference.cache
+C:\Users\allen\Documents\Visual Studio 2015\Projects\ComputerGraphicsProject\Wpf3D\obj\Release\MainWindow.g.cs
+C:\Users\allen\Documents\Visual Studio 2015\Projects\ComputerGraphicsProject\Wpf3D\obj\Release\App.g.cs
+C:\Users\allen\Documents\Visual Studio 2015\Projects\ComputerGraphicsProject\Wpf3D\obj\Release\Wpf3D_MarkupCompile.cache
+C:\Users\allen\Documents\Visual Studio 2015\Projects\ComputerGraphicsProject\Wpf3D\obj\Release\Wpf3D_MarkupCompile.lref
+C:\Users\allen\Documents\Visual Studio 2015\Projects\ComputerGraphicsProject\Wpf3D\obj\Release\MainWindow.baml
+C:\Users\allen\Documents\Visual Studio 2015\Projects\ComputerGraphicsProject\Wpf3D\obj\Release\Wpf3D.g.resources
+C:\Users\allen\Documents\Visual Studio 2015\Projects\ComputerGraphicsProject\Wpf3D\obj\Release\Wpf3D.Properties.Resources.resources
+C:\Users\allen\Documents\Visual Studio 2015\Projects\ComputerGraphicsProject\Wpf3D\obj\Release\Wpf3D.csproj.GenerateResource.Cache
+C:\Users\allen\Documents\Visual Studio 2015\Projects\ComputerGraphicsProject\Wpf3D\obj\Release\Wpf3D.exe
+C:\Users\allen\Documents\Visual Studio 2015\Projects\ComputerGraphicsProject\Wpf3D\obj\Release\Wpf3D.pdb

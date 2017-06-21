@@ -6,8 +6,9 @@ namespace ComputerGraphicsProject
 {
     class Bezier : Spline
     {
-        public Bezier(List<Point> lp) : base(lp)
+        public Bezier(List<Point> lp, FormPaint form) : base(lp)
         {
+            f = form;
         }
 
         // Bezier曲线的De Casteljau算法

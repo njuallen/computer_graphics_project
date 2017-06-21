@@ -9,8 +9,9 @@ namespace ComputerGraphicsProject
     {
         // 多边形的几个顶点
         private List<Point> vertices;
-        public Polygon(List<Point> lp)
+        public Polygon(List<Point> lp, FormPaint form)
         {
+            f = form;
             graphicType = "Polygon";
             // 由于我们的多边形在构造时是单击记录一个顶点
             // 最后一个顶点是以双击来记录的
@@ -29,7 +30,7 @@ namespace ComputerGraphicsProject
             var len = vertices.Count;
             for (var i = 0; i < len; i++)
             {
-                var p = new BresenhamLine(vertices[i], vertices[(i + 1) % len]);
+                var p = new BresenhamLine(vertices[i], vertices[(i + 1) % len], f);
                 l.AddRange(p.Points());
             }
             return l;

@@ -13,25 +13,29 @@ namespace ComputerGraphicsProject
         public bool isSelected = false;
         // 这个图元边界上的点
         protected List<Point> points;
+
+        // 当前用来作图的form
+        protected FormPaint f;
         
         // 指明这个图形的类型
         public string graphicType;
 
-        public virtual void Draw(PaintEventArgs e, Pen pen)
+        // 把这个图形从界面上抹去
+        public virtual void UnDraw(int penIndex)
         {
-#if MYDEBUG
-            Console.WriteLine("*************************************");
-#endif
             foreach (var p in points)
-            {
-#if MYDEBUG
-                Console.WriteLine(p.ToString());
-#endif
-                画图.DrawPoint(e, pen, p.X, p.Y);
-            }
-#if MYDEBUG
-            Console.WriteLine("*************************************");
-#endif
+                if (f.CheckOnCanvas(p.X, p.Y))
+                    f.screenBuffer[p.X, p.Y, penIndex]--;
+            f.UpdateMyCanvas(points);
+        }
+
+        public virtual void Draw(int penIndex)
+        {
+            // 我们画就直接画在最顶层
+            foreach (var p in points)
+                if (f.CheckOnCanvas(p.X, p.Y))
+                    f.screenBuffer[p.X, p.Y, penIndex]++;
+            f.UpdateMyCanvas(points);
         }
 
         public virtual void Translation(int dx, int dy)

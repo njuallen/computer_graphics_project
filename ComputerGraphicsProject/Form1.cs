@@ -3,39 +3,57 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
+using Wpf3D;
+
 
 namespace ComputerGraphicsProject
 {
-    public partial class 画图 : Form
+    public partial class FormPaint : Form
     {
-        public 画图()
+        public FormPaint()
         {
             InitializeComponent();
         }
 
-        private void Form1_Load(object sender, EventArgs e)
-        {
-            DoubleBuffered = true;
-            for (var i = 0; i < form_width; i++)
-            {
-                var l = new List<bool>();
-                for (var j = 0; j < form_height; j++)
-                    l.Add(false);
-                flag.Add(l);
-            }
-        }
-    
+        // *************************** 不变量 *****************************
         static int form_width = 800;
         static int form_height = 600;
+        // 用于绘图的颜色的数量，不包括空白颜色
+        static int numColor = 4;
+
+        Color[] colors = { Color.Red, Color.Blue, Color.Yellow, Color.Black };
+
+        int defaultColor = 0;
+        int drawingColor = 1;
+        int selectionColor = 2;
+        public int fillColor = 3;
+
+        // 如果这个像素点上啥都没画，就应该是这个颜色
+        Color backgroundColor = Color.Gray;
+
+
+        // *********************** 变量 *************************************
+        public int[,,] screenBuffer = new int[form_width, form_height, numColor];
+        Bitmap myCanvas;
+        // 我们画出的图形
         List<Primitive> graphics = new List<Primitive>();
 
+        // 当前正在画的直线/圆/椭圆/多边形的边/样条曲线控制边
+        Primitive currPrimitive = null;
+
+        // 已经画下来的多边形/样条曲线控制边
+        List<Primitive> currPolygon = new List<Primitive>();
+
+        // 当前在画多边形，样条曲线时已经记录下的顶点/控制点
         List<Point> vertices = new List<Point>();
 
         bool isMouseDown = false;
+
         Point firstPoint;
         Point prevPoint;
 
@@ -44,106 +62,163 @@ namespace ComputerGraphicsProject
 
         string mode = "Bresenham";
 
-        // 这个flag标识着屏幕上的某个位置是否有像素点
-        // 屏幕大小为form_width * form_height
-        static public List<List<bool>> flag = new List<List<bool>>();
-        
-        // we use Red to draw
-        Pen drawingPen = Pens.Red;
-        // the graph being drawn is in blue
-        Pen currPen = Pens.Blue;
-        // the selected graph is in Yellow
-        Pen selectionPen = Pens.Yellow;
-        // 这是用来进行区域填充的颜色
-        Pen fillPen = Pens.Black;
-
-        private void Form1_MouseClick(object sender, MouseEventArgs e)
-        {
-            ClearPointerSelection();
-            var point = PointToClient(Cursor.Position);
-            
-            if (mode == "Fill")
-            {
-                var block = new Block(point);
-                graphics.Add(block);
-            }
-            else if (mode == "Polygon" || mode == "Bezier" || mode == "Bspline")
-            {
-                // 将当前点加入到多边形的顶点序列中
-                vertices.Add(point);
-            }
-            else
-            {
-
-            }
-        }
-
         // 这个变量记录的是指定图形累计被scale了多少
         double totalScaleFactor = 1.0;
 
+        private void Init()
+        {
+            myCanvas = new Bitmap(form_width, form_height - 40);
+            graphics.Clear();
+            InitDraw();
+        }
+
+        // 不更新画布，只更新绘图要用的变量
+        private void InitDraw()
+        {
+            currPrimitive = null;
+            currPolygon.Clear();
+            vertices.Clear();
+            isMouseDown = false;
+            firstPoint.X = -1;
+            prevPoint.X = -1;
+            selected = null;
+            totalScaleFactor = 1.0;
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            Init();
+        }
+
+        // 这个是用来进行完全重绘的
+        // 我们平常的简单更新直接调用UpdateScreen就可以了
         private void Form1_Paint(object sender, PaintEventArgs e)
         {
-#if MYDEBUG
-            Console.WriteLine("********************");
-            var tmp = new BresenhamLine(new Point(455, 228), new Point(366, 259));
-            tmp.Draw(e, currPen);
-            timer1.Enabled = false;
-            return;
-#endif
+            // 显示已经画好的图形
+            // UpdateScreen();
+        }
 
-            // 由于要进行重绘，所以屏幕上的点要全部被清空
-            // 每一次都进行重新绘制，确实比较慢
-            // 尤其是色块，涉及到的点特别多，也就尤其地慢
-            // 但我感觉这样就行了，如果要搞增量绘制的话，每次只绘制改变的像素点
-            // 就会遇到一个比较麻烦的问题：
-            // 图形会重叠，如果这时我把上面的图形给移动了
-            // 则颜色要变成下面的图形的颜色
-            // 即必须要引入图层
-            // 这个就太复杂了，我不准备搞了
-            for (var i = 0; i < form_width; i++)
-                for (var j = 0; j < form_height; j++)
-                    flag[i][j] = false;
-
-            var len = 0;
-            
-            // show the one that the user is drawing
-            // 如果是画多边形，我们就要先把顶点顺序连接
-            // 如果是画样条曲线，我们就要先把控制顶点顺序连接
-            var point = PointToClient(Cursor.Position);
-            if (mode == "Polygon" || mode == "Bezier" || mode == "Bspline")
+        private void Form1_MouseDown(object sender, MouseEventArgs e)
+        {
+            Point point = PointToClient(Cursor.Position);
+            isMouseDown = true;
+            firstPoint = point;
+            Console.WriteLine("MouseDown");
+            // 这个三个操作需要选中图形
+            // 距离鼠标位置距离小于3的图形被选中
+            if (mode == "Translation" || mode == "Rotate" || mode == "Scale")
             {
-                len = vertices.Count;
-                for (var i = 0; i < len - 1; i++)
+                foreach (var g in graphics)
                 {
-                    var line = new BresenhamLine(vertices[i], vertices[i + 1]);
-                    line.Draw(e, currPen);
-                }
-                if (len > 0)
-                {
-                    var line = new BresenhamLine(vertices[len - 1], point);
-                    line.Draw(e, currPen);
+                    if (g.Distance(point) <= 3.0)
+                    {
+                        g.isSelected = true;
+                        selected = g;
+                        // 被选中的图形原先肯定是defaultColor
+                        // 图形被选中之后，立马就把这个图形的颜色给改掉
+                        selected.UnDraw(defaultColor);
+                        selected.Draw(selectionColor);
+                        UpdateScreen();
+                        return;
+                    }
                 }
             }
+        }
 
+        private void Form1_MouseUp(object sender, MouseEventArgs e)
+        {
+            Console.WriteLine("MouseUp");
+            Point point = PointToClient(Cursor.Position);
+            isMouseDown = false;
+            if (mode == "DDA" || mode == "Bresenham" || mode == "Circle" ||
+                mode == "Ellipse")
+            {
+                // 直线已经画完了，我们把它从蓝色变成红色
+                if (currPrimitive != null)
+                {
+                    currPrimitive.UnDraw(drawingColor);
+                    currPrimitive.Draw(defaultColor);
+                    graphics.Add(currPrimitive);
+                    currPrimitive = null;
+                }
+            }
+            if (mode == "Polygon" || mode == "Bezier" || mode == "Bspline")
+            {
+                if (currPrimitive != null)
+                {
+                    Console.WriteLine("Add to polygon");
+                    currPolygon.Add(currPrimitive);
+                    currPrimitive = null;
+                    return;
+                }
+            }
+            else if (mode == "Trimming")
+            {
+                if (currPrimitive != null)
+                {
+                    // 裁剪所用的矩形的大小
+                    var x = ((DashedRectangle)currPrimitive).x;
+                    var y = ((DashedRectangle)currPrimitive).y;
+                    var width = ((DashedRectangle)currPrimitive).width;
+                    var height = ((DashedRectangle)currPrimitive).height;
+                    Rectangle rect = new Rectangle(x, y, width, height);
+                    // 将直线和多边形都裁剪一遍
+                    foreach (var g in graphics)
+                        if (g.graphicType == "Line" || g.graphicType == "Polygon")
+                        {
+                            g.UnDraw(defaultColor);
+                            g.Trim(rect);
+                            g.Draw(defaultColor);
+                        }
+                    // 将裁剪所用的矩形框给消去
+                    currPrimitive.UnDraw(drawingColor);
+                    currPrimitive = null;
+                }
+            }
+            else if ((mode == "Translation" || mode == "Rotate" || mode == "Scale") && selected != null)
+            {
+                // 换回原来的颜色
+                firstPoint.X = -1;
+                firstPoint.Y = -1;
+                prevPoint.X = -1;
+                prevPoint.Y = -1;
+                selected.UnDraw(selectionColor);
+                selected.Draw(defaultColor);
+                selected.isSelected = false;
+                selected = null;
+                totalScaleFactor = 1.0;
+            }
+            
+            UpdateScreen();
+        }
+
+        private void Form1_MouseMove(object sender, MouseEventArgs e)
+        {
+            Point point = PointToClient(Cursor.Position);
+            // Console.WriteLine("MouseMove");
+            // 先把当前图形消去
+            if (currPrimitive != null)
+                currPrimitive.UnDraw(drawingColor);
+
+            // 将用户正在画的图形显示出来
             if (isMouseDown)
             {
+                // 在MouseDown的时候，我们要画的图形有直线、圆、椭圆、裁剪框、平移、旋转、缩放变换
                 if (mode == "DDA")
                 {
-                    var line = new DDALine(firstPoint, point);
-                    line.Draw(e, currPen);
+                    // 先把当前这条线给去掉
+                    currPrimitive = new DDALine(firstPoint, point, this);
                 }
                 else if (mode == "Bresenham")
                 {
-                    var line = new BresenhamLine(firstPoint, point);
-                    line.Draw(e, currPen);
+                    currPrimitive = new BresenhamLine(firstPoint, point, this);
                 }
                 else if (mode == "Circle")
                 {
                     int dx = point.X - firstPoint.X;
                     int dy = point.Y - firstPoint.Y;
                     int distance = (int)Math.Sqrt(dx * dx + dy * dy);
-                    var circle = new Circle(firstPoint, distance);
-                    circle.Draw(e, currPen);
+                    currPrimitive = new Circle(firstPoint, distance, this);
                 }
                 else if (mode == "Ellipse")
                 {
@@ -153,22 +228,16 @@ namespace ComputerGraphicsProject
                     var x = Math.Abs((firstPoint.X - point.X) / 2);
                     // y轴长度
                     var y = Math.Abs((firstPoint.Y - point.Y) / 2);
-                    var ellipse = new Ellipse(center, x, y);
-                    ellipse.Draw(e, currPen);
+                    currPrimitive = new Ellipse(center, x, y, this);
                 }
                 else if (mode == "Trimming")
                 {
-                    // 裁剪所用的矩形
+                    // 裁剪所用的矩形的大小
                     var width = Math.Abs(firstPoint.X - point.X);
                     var height = Math.Abs(firstPoint.Y - point.Y);
                     var minX = Math.Min(firstPoint.X, point.X);
                     var minY = Math.Min(firstPoint.Y, point.Y);
-                    Rectangle rect = new Rectangle(minX, minY, width, height);
-
-                    // 画出裁剪所用的那个矩形框
-                    Pen trimmingPen = new Pen(Color.GreenYellow, 2);
-                    trimmingPen.DashStyle = DashStyle.Dash;
-                    e.Graphics.DrawRectangle(trimmingPen, rect);
+                    currPrimitive = new DashedRectangle(minX, minY, width, height, this);
                 }
                 else if (mode == "Translation")
                 {
@@ -180,8 +249,12 @@ namespace ComputerGraphicsProject
                         // 这一次移动好之后，图形就到新位置了
                         // 下一次当然要从那个位置开始重新移动
                         firstPoint = point;
+                        selected.UnDraw(selectionColor);
                         selected.Translation(dx, dy);
+                        selected.Draw(selectionColor);
+                        UpdateScreen();
                     }
+                    return;
                 }
                 else if (mode == "Rotate")
                 {
@@ -220,10 +293,14 @@ namespace ComputerGraphicsProject
                                 sin = -sin;
                             if (!Double.IsNaN(sin) && !Double.IsNaN(cos))
                             {
+                                selected.UnDraw(selectionColor);
                                 selected.Rotate(firstPoint, sin, cos);
+                                selected.Draw(selectionColor);
+                                UpdateScreen();
                             }
                         }
                         prevPoint = point;
+                        return;
                     }
 
                 }
@@ -242,235 +319,295 @@ namespace ComputerGraphicsProject
                         scaleFactor /= totalScaleFactor;
                         if (!Double.IsNaN(scaleFactor) && !Double.IsInfinity(scaleFactor))
                         {
+                            selected.UnDraw(selectionColor);
                             selected.Scale(firstPoint, scaleFactor);
                             totalScaleFactor *= scaleFactor;
+                            selected.Draw(selectionColor);
+                            UpdateScreen();
                         }
-                    }
-                }
-            }
-
-            // 显示已经画好的图形
-            len = graphics.Count;
-            for (var i = 0; i < len; i++)
-                if (graphics[i].isSelected)
-                    graphics[i].Draw(e, selectionPen);
-                else
-                    graphics[i].Draw(e, drawingPen);
-        }
-
-        private void Form1_MouseDown(object sender, MouseEventArgs e)
-        {
-            Point point = PointToClient(Cursor.Position);
-            isMouseDown = true;
-            firstPoint = point;
-
-            // 这个三个操作需要选中图形
-            // 距离鼠标位置距离小于3的图形被选中
-            if (mode == "Translation" || mode == "Rotate" || mode == "Scale")
-            {
-                foreach (var l in graphics)
-                {
-                    if (l.Distance(point) <= 3.0)
-                    {
-                        l.isSelected = true;
-                        selected = l;
                         return;
                     }
                 }
+                else
+                    return;
             }
-        }
-
-        private void Form1_MouseUp(object sender, MouseEventArgs e)
-        {
-            Point point = PointToClient(Cursor.Position);
-            isMouseDown = false;
-         
-			if (mode == "DDA")
-			{
-                graphics.Add(new DDALine(firstPoint, point));
-            }
-			else if (mode == "Bresenham")
-			{
-				graphics.Add(new BresenhamLine(firstPoint, point));
-			}
-			else if (mode == "Circle")
-			{
-				int dx = point.X - firstPoint.X;
-				int dy = point.Y - firstPoint.Y;
-				int distance = (int)Math.Sqrt(dx * dx + dy * dy);
-				graphics.Add(new Circle(firstPoint, distance));
-			}
-			else if(mode == "Ellipse")
-			{
-				// 第一个点和第二个点构成一个矩形，椭圆是这个矩形的内切椭圆
-				var center = new Point((firstPoint.X + point.X) / 2, (firstPoint.Y + point.Y) / 2);
-				// x轴长度
-				var x = Math.Abs((firstPoint.X - point.X) / 2);
-				// y轴长度
-				var y = Math.Abs((firstPoint.Y - point.Y) / 2);
-				graphics.Add(new Ellipse(center, x, y));
-			}
-            else if(mode == "Trimming")
+            else
             {
-                // 裁剪所用的矩形的大小
-                var width = Math.Abs(firstPoint.X - point.X);
-                var height = Math.Abs(firstPoint.Y - point.Y);
-                var minX = Math.Min(firstPoint.X, point.X);
-                var minY = Math.Min(firstPoint.Y, point.Y);
-                Rectangle rect = new Rectangle(minX, minY, width, height);
-                // 将直线和多边形都裁剪一遍
-                foreach(var g in graphics)
-                    if(g.graphicType == "Line" || g.graphicType == "Polygon")
-                        g.Trim(rect);
+                // 在MouseUp时候的Move，我们是在画多边形/样条曲线的控制边
+                // 我们画的是当前还在动的那条边
+                if ((mode == "Polygon" || mode == "Bezier" || mode == "Bspline") && firstPoint.X != -1)
+                    currPrimitive = new DDALine(firstPoint, point, this);
+                else
+                    return;
             }
-            else if(mode == "Translation" || mode == "Rotate" || mode == "Scale")
+            // 图形更新完成
+            // 重新画出来
+            currPrimitive.Draw(drawingColor);
+            UpdateScreen();
+        }
+
+        private void Form1_MouseClick(object sender, MouseEventArgs e)
+        {
+            var point = PointToClient(Cursor.Position);
+            Console.WriteLine("MouseClick");
+            if (mode == "Fill")
             {
-                firstPoint.X = -1;
-                firstPoint.Y = -1;
-                prevPoint.X = -1;
-                prevPoint.Y = -1;
-                selected = null;
-                totalScaleFactor = 1.0;
-                ClearPointerSelection();
+                var block = new Block(point, this);
+                // 立即画出来
+                block.Draw(fillColor);
+                graphics.Add(block);
+            }
+            else if (mode == "Polygon" || mode == "Bezier" || mode == "Bspline")
+            {
+                // 将当前点加入到多边形的顶点序列中
+                vertices.Add(point);
+            }
+            else
+            {
+
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void Form1_DoubleClick(object sender, EventArgs e)
         {
-            isMouseDown = false;
-            ClearPointerSelection();
-            mode = "Bresenham";
+            Console.WriteLine("DoubleClick");
+            if (mode == "Polygon")
+            {
+                // 将已经画好的多边形边框给去掉
+                foreach (var l in currPolygon)
+                    l.UnDraw(drawingColor);
+                currPolygon.Clear();
+                // 画多边形是以双击表示结束的
+                // 首先先将当前点加入到多边形的顶点序列中，作为最后一个点
+                var point = PointToClient(Cursor.Position);
+                vertices.Add(point);
+                var tmp = new Polygon(vertices, this);
+                tmp.Draw(defaultColor);
+                graphics.Add(tmp);
+                vertices.Clear();
+                UpdateScreen();
+                Console.WriteLine("**********************");
+            }
+            else if (mode == "Bezier")
+            {
+                foreach (var l in currPolygon)
+                    l.UnDraw(drawingColor);
+                currPolygon.Clear();
+                // 画多边形是以双击表示结束的
+                // 首先先将当前点加入到多边形的顶点序列中，作为最后一个点
+                var point = PointToClient(Cursor.Position);
+                vertices.Add(point);
+                var tmp = new Bezier(vertices, this);
+                tmp.Draw(defaultColor);
+                graphics.Add(tmp);
+                vertices.Clear();
+                UpdateScreen();
+            }
+            else if (mode == "Bspline")
+            {
+                foreach (var l in currPolygon)
+                    l.UnDraw(drawingColor);
+                currPolygon.Clear();
+                var point = PointToClient(Cursor.Position);
+                vertices.Add(point);
+                var tmp = new Bspline(vertices, this);
+                graphics.Add(tmp);
+                tmp.Draw(defaultColor);
+                vertices.Clear();
+                UpdateScreen();
+            }
+            // use this to invalidate firstPoint
+            firstPoint.X = -1;
         }
 
-        private void button2_Click(object sender, EventArgs e)
-        {
-            isMouseDown = false;
-            ClearPointerSelection();
-            mode = "DDA";
-        }
-
-        private void button3_Click(object sender, EventArgs e)
-        {
-            isMouseDown = false;
-            ClearPointerSelection();
-            mode = "Circle";
-        }
-
-        private void button4_Click(object sender, EventArgs e)
-        {
-            isMouseDown = false;
-            ClearPointerSelection();
-            mode = "Ellipse";
-        }
-
-        private void button5_Click(object sender, EventArgs e)
+        // 保存图片
+        private void buttonSave_Click(object sender, EventArgs e)
         {
             isMouseDown = false;
             ClearPointerSelection();
             // When user clicks button, show the dialog.
             saveFileDialog1.ShowDialog();
+            InitDraw();
         }
 
-        private void button6_Click_1(object sender, EventArgs e)
+        // 清屏
+        private void buttonClearing_Click(object sender, EventArgs e)
+        {
+            Init();
+            mode = "Clearing";
+            ResetScreenBuffer();
+            // 在进行refresh的时候，屏幕就被清空了
+            Refresh();
+            InitDraw();
+        }
+
+        // DDA
+        private void buttonDDA_Click(object sender, EventArgs e)
         {
             isMouseDown = false;
             ClearPointerSelection();
-            mode = "Fill";
+            mode = "DDA";
+            InitDraw();
         }
 
-        private void button7_Click(object sender, EventArgs e)
+        // Bresenham
+        private void buttonBresenham_Click(object sender, EventArgs e)
+        {
+            isMouseDown = false;
+            ClearPointerSelection();
+            mode = "Bresenham";
+            InitDraw();
+        }
+
+        // 圆
+        private void buttonCircle_Click(object sender, EventArgs e)
+        {
+            isMouseDown = false;
+            ClearPointerSelection();
+            mode = "Circle";
+            InitDraw();
+        }
+
+        // 椭圆
+        private void buttonEllipse_Click(object sender, EventArgs e)
+        {
+            isMouseDown = false;
+            ClearPointerSelection();
+            mode = "Ellipse";
+            InitDraw();
+        }
+        
+        // 多边形
+        private void buttonPolygon_Click(object sender, EventArgs e)
         {
             isMouseDown = false;
             ClearPointerSelection();
             mode = "Polygon";
+            InitDraw();
         }
 
-        private void button8_Click(object sender, EventArgs e)
+        // Bezier曲线
+        private void buttonBezier_Click(object sender, EventArgs e)
         {
             isMouseDown = false;
             ClearPointerSelection();
-            // 裁剪
-            mode = "Trimming";
-        }
-
-        private void button9_Click(object sender, EventArgs e)
-        {
-            isMouseDown = false;
-            ClearPointerSelection();
-            // Bezier曲线
             mode = "Bezier";
+            InitDraw();
         }
 
-        private void button10_Click(object sender, EventArgs e)
+        // B样条曲线
+        private void buttonBspline_Click(object sender, EventArgs e)
         {
             isMouseDown = false;
             ClearPointerSelection();
-            // B样条曲线
             mode = "Bspline";
+            InitDraw();
         }
 
-        private void button11_Click(object sender, EventArgs e)
+        // 裁剪
+        private void buttonTrimming_Click(object sender, EventArgs e)
         {
             isMouseDown = false;
             ClearPointerSelection();
-            // 平移
+            mode = "Trimming";
+            InitDraw();
+        }
+       
+        // 填充
+        private void buttonFill_Click(object sender, EventArgs e)
+        {
+            isMouseDown = false;
+            ClearPointerSelection();
+            mode = "Fill";
+            InitDraw();
+        }
+
+        // 平移
+        private void buttonTranslation_Click(object sender, EventArgs e)
+        {
+            isMouseDown = false;
+            ClearPointerSelection();
             mode = "Translation";
+            InitDraw();
         }
-
-        private void button12_Click(object sender, EventArgs e)
+        
+        // 旋转
+        private void buttonRotate_Click(object sender, EventArgs e)
         {
             isMouseDown = false;
             ClearPointerSelection();
-            // 旋转
             mode = "Rotate";
+            InitDraw();
         }
 
-        private void button13_Click(object sender, EventArgs e)
+        // 缩放
+        private void buttonScale_Click(object sender, EventArgs e)
         {
             isMouseDown = false;
             ClearPointerSelection();
-            // 缩放
             mode = "Scale";
+            InitDraw();
         }
 
-        private void button14_Click(object sender, EventArgs e)
+        private void button1_Click(object sender, EventArgs e)
         {
-            // 清屏
-            isMouseDown = false;
-            ClearPointerSelection();
-            firstPoint.X = -1;
-            firstPoint.Y = -1;
-            prevPoint.X = -1;
-            prevPoint.Y = -1;
-            selected = null;
-            totalScaleFactor = 1.0;
-            ClearPointerSelection();
-            vertices.Clear();
-            // 将记录的所有图形删除掉
-            graphics.Clear();
-            mode = "Clearing";
-            // 在进行refresh的时候，屏幕就被清空了，同时flag数组也会被清空
-            Refresh();
+            Wpf3D.MainWindow wpfwindow = new Wpf3D.MainWindow();
+            wpfwindow.Show();
         }
 
-        private void timer1_Tick(object sender, EventArgs e)
+        // 清空screenBuffer
+        private void ResetScreenBuffer()
         {
-            // Refresh();
+            for (var i = 0; i < form_width; i++)
+                for (var j = 0; j < form_height; j++)
+                    for (var k = 0; k < numColor; k++)
+                        screenBuffer[i, j, k] = 0;
         }
 
-        static public void DrawPoint(PaintEventArgs e, Pen pen, int x, int y)
+        public bool IsEmpty(int x, int y)
         {
-            if (x >= 0 && x < form_width && y >= 40 && y < form_height)
+            for (var i = 0; i < numColor; i++)
+                if (screenBuffer[x, y, i] > 0)
+                    return true;
+            return false;
+        }
+
+        // 更新我们自己维护的屏幕上的一系列像素
+        public void UpdateMyCanvas(List<Point> l)
+        {
+            foreach (var p in l)
             {
-                flag[x][y] = true;
-                Rectangle rect = new Rectangle(x, y, 1, 1);
-                e.Graphics.DrawRectangle(pen, rect);
+                var x = p.X;
+                var y = p.Y;
+                if (CheckOnCanvas(x, y))
+                {
+                    Rectangle rect = new Rectangle(x, y, 1, 1);
+                    var color = backgroundColor;
+                    // drawingColor
+                    if (screenBuffer[x, y, 1] > 0)
+                        color = colors[1];
+                    // selectionColor
+                    else if (screenBuffer[x, y, 2] > 0)
+                        color = colors[2];
+                    // fillColor
+                    else if (screenBuffer[x, y, 3] > 0)
+                        color = colors[3];
+                    else if (screenBuffer[x, y, 0] > 0)
+                        color = colors[0];
+                    myCanvas.SetPixel(x, y - 40, color);
+                }
             }
+        }
+
+        public void UpdateScreen()
+        {
+            Graphics graphics = CreateGraphics();
+            graphics.DrawImage(myCanvas, new Rectangle(0, 40, form_width, form_height - 40));
         }
 
         // 检查这个点是否在画布上
         // 画布的范围是不包括button的空白位置
-        static public bool CheckOnCanvas(int x, int y)
+        public bool CheckOnCanvas(int x, int y)
         {
             return x >= 0 && x < form_width && y >= 40 && y < form_height;
         }
@@ -483,40 +620,10 @@ namespace ComputerGraphicsProject
                 g.isSelected = false;
         }
 
-        private void Form1_DoubleClick(object sender, EventArgs e)
-        {
-            if(mode == "Polygon")
-            {
-                // 画多边形是以双击表示结束的
-                // 首先先将当前点加入到多边形的顶点序列中，作为最后一个点
-                var point = PointToClient(Cursor.Position);
-                vertices.Add(point);
-                graphics.Add(new Polygon(vertices));
-                vertices.Clear();
-            }
-            else if(mode == "Bezier")
-            {
-                // 画多边形是以双击表示结束的
-                // 首先先将当前点加入到多边形的顶点序列中，作为最后一个点
-                var point = PointToClient(Cursor.Position);
-                vertices.Add(point);
-                graphics.Add(new Bezier(vertices));
-                vertices.Clear();
-            }
-            else if(mode == "Bspline")
-            {
-                var point = PointToClient(Cursor.Position);
-                vertices.Add(point);
-                graphics.Add(new Bspline(vertices));
-                vertices.Clear();
-            }
-        }
-
         private void saveFileDialog1_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
         {
             // Get file name.
             var name = saveFileDialog1.FileName;
-            Console.WriteLine(name);
 
             var format = ImageFormat.Jpeg;
 
@@ -545,9 +652,9 @@ namespace ComputerGraphicsProject
             }
         }
 
-        private void 画图_MouseMove(object sender, MouseEventArgs e)
+        private void backgroundWorker1_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
         {
-            Refresh();
+
         }
 
       

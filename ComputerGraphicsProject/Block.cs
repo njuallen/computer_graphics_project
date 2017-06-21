@@ -9,8 +9,9 @@ namespace ComputerGraphicsProject
         // 从哪个中心点开始的填充
         // 由于我采用的是邻域扩充法，所以需要指明一个中心点
         private Point p;
-        public Block(Point c)
+        public Block(Point c, FormPaint form)
         {
+            f = form;
             graphicType = "Block";
             p = c;
             // 此时，一系列点指的是色块内部的点
@@ -22,9 +23,8 @@ namespace ComputerGraphicsProject
         {
 
             List<Point> l = new List<Point>();
-
             Queue<Point> q = new Queue<Point>();
-            画图.flag[p.X][p.Y] = true;
+            f.screenBuffer[p.X, p.Y, f.fillColor]++;
             q.Enqueue(p);
             while (q.Count > 0)
             {
@@ -33,24 +33,24 @@ namespace ComputerGraphicsProject
                 var y = p.Y;
                 l.Add(p);
                 // 使用四邻域扩充
-                if (画图.CheckOnCanvas(x + 1, y) && !画图.flag[x + 1][y])
+                if (f.CheckOnCanvas(x + 1, y) && !f.IsEmpty(x + 1, y))
                 {
-                    画图.flag[x + 1][y] = true;
+                    f.screenBuffer[x + 1, y, f.fillColor]++;
                     q.Enqueue(new Point(x + 1, y));
                 }
-                if (画图.CheckOnCanvas(x - 1, y) && !画图.flag[x - 1][y])
+                if (f.CheckOnCanvas(x - 1, y) && !f.IsEmpty(x - 1, y))
                 {
-                    画图.flag[x - 1][y] = true;
+                    f.screenBuffer[x - 1, y, f.fillColor]++;
                     q.Enqueue(new Point(x - 1, y));
                 }
-                if (画图.CheckOnCanvas(x, y + 1) && !画图.flag[x][y + 1])
+                if (f.CheckOnCanvas(x, y + 1) && !f.IsEmpty(x, y + 1))
                 {
-                    画图.flag[x][y + 1] = true;
+                    f.screenBuffer[x, y + 1, f.fillColor]++;
                     q.Enqueue(new Point(x, y + 1));
                 }
-                if (画图.CheckOnCanvas(x, y - 1) && !画图.flag[x][y - 1])
+                if (f.CheckOnCanvas(x, y - 1) && !f.IsEmpty(x, y - 1))
                 {
-                    画图.flag[x][y - 1] = true;
+                    f.screenBuffer[x, y + 1, f.fillColor]++;
                     q.Enqueue(new Point(x, y - 1));
                 }
             }

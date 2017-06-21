@@ -1,0 +1,11 @@
+C:\Users\allen\Documents\Visual Studio 2015\Projects\ComputerGraphicsProject\ComputerGraphicsProject\bin\Release\ComputerGraphicsProject.exe.config
+C:\Users\allen\Documents\Visual Studio 2015\Projects\ComputerGraphicsProject\ComputerGraphicsProject\bin\Release\ComputerGraphicsProject.exe
+C:\Users\allen\Documents\Visual Studio 2015\Projects\ComputerGraphicsProject\ComputerGraphicsProject\bin\Release\ComputerGraphicsProject.pdb
+C:\Users\allen\Documents\Visual Studio 2015\Projects\ComputerGraphicsProject\ComputerGraphicsProject\obj\Release\ComputerGraphicsProject.Properties.Resources.resources
+C:\Users\allen\Documents\Visual Studio 2015\Projects\ComputerGraphicsProject\ComputerGraphicsProject\obj\Release\ComputerGraphicsProject.csproj.GenerateResource.Cache
+C:\Users\allen\Documents\Visual Studio 2015\Projects\ComputerGraphicsProject\ComputerGraphicsProject\obj\Release\ComputerGraphicsProject.exe
+C:\Users\allen\Documents\Visual Studio 2015\Projects\ComputerGraphicsProject\ComputerGraphicsProject\obj\Release\ComputerGraphicsProject.pdb
+C:\Users\allen\Documents\Visual Studio 2015\Projects\ComputerGraphicsProject\ComputerGraphicsProject\obj\Release\ComputerGraphicsProject.csprojResolveAssemblyReference.cache
+C:\Users\allen\Documents\Visual Studio 2015\Projects\ComputerGraphicsProject\ComputerGraphicsProject\obj\Release\ComputerGraphicsProject.FormPaint.resources
+C:\Users\allen\Documents\Visual Studio 2015\Projects\ComputerGraphicsProject\ComputerGraphicsProject\bin\Release\Wpf3D.exe
+C:\Users\allen\Documents\Visual Studio 2015\Projects\ComputerGraphicsProject\ComputerGraphicsProject\bin\Release\Wpf3D.pdb

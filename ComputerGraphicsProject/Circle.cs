@@ -12,8 +12,9 @@ namespace ComputerGraphicsProject
 	{
 		private Point center;
 		private int radius;
-		public Circle(Point c, int r)
+		public Circle(Point c, int r, FormPaint form)
 		{
+            f = form;
             graphicType = "Circle";
 			center = c;
 			radius = r;
