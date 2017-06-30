@@ -342,7 +342,8 @@ namespace ComputerGraphicsProject
             }
             // 图形更新完成
             // 重新画出来
-            currPrimitive.Draw(drawingColor);
+            if (currPrimitive != null)
+                currPrimitive.Draw(drawingColor);
             UpdateScreen();
         }
 
