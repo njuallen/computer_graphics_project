@@ -22,74 +22,59 @@ namespace ComputerGraphicsProject
             points = Points();
 		}
 
+        // Use MidPoint ellipse drawing algorithm
 		public override List<Point> Points()
 		{
 			List<Point> l = new List<Point>();
 			int x = 0;
 			int y = ry;
 			// 决策参数p
-			int p = ry * ry - rx * rx * ry + rx * rx / 4;
+			int p = ry * ry + rx * rx * (1 - 4 * ry) / 4;
+
+            l.Add(new Point(center.X + x, center.Y + y));
+            l.Add(new Point(center.X + x, center.Y - y));
+
             // 区域1，沿x方向取样
-            /*
-            Console.WriteLine("****************************");
-            Console.WriteLine(string.Format("({0}, {1})", rx, ry));
-            */
-
-            // 我认为这里的这个判断条件可能有问题，导致循环多走了好多轮，点都画到椭圆外面去了
-            while (ry * ry * x < rx * rx * y)
+            while (ry * ry * x <= rx * rx * y)
 			{
-            
-                /*    
-                Console.WriteLine("-------------------------");
-                Console.WriteLine(string.Format("({0}, {1})", x, y));
-                */
-
-                // 画出这个点以及其他三个对称点
-                l.Add(new Point(center.X + x, center.Y + y));
-				l.Add(new Point(center.X + x, center.Y - y));
-				l.Add(new Point(center.X - x, center.Y + y));
-				l.Add(new Point(center.X - x, center.Y - y));
-				
 				if (p < 0)
 				{
-					p += ry * ry * (1 + 2 * x);
+					p += ry * ry * (2 * x + 3);
 				}
 				else
 				{
-					p += ry * ry * (1 + 2 * x) + rx * rx * (1 - 2 * y);
+					p += ry * ry * (2 * x + 3) - 2 * rx * rx * (y - 1);
                     y -= 1;
                 }
                 x += 1;
+
+                // 画出这个点以及其他三个对称点
+                l.Add(new Point(center.X + x, center.Y + y));
+                l.Add(new Point(center.X + x, center.Y - y));
+                l.Add(new Point(center.X - x, center.Y + y));
+                l.Add(new Point(center.X - x, center.Y - y));
             }
 
 			p = Convert.ToInt32(ry * ry * (x + 0.5) * (x + 0.5) + rx * rx * (y - 1) * (y - 1) - rx * rx * ry * ry);
-            // Console.WriteLine(string.Format("[{0}, {1}]", x, y));
 
             // 区域2，沿y方向取样
             while (y >= 0)
 			{
-                
-                /*
-                Console.WriteLine(">>>>>>>>>>>>>>>>>>>>>>>>");
-                Console.WriteLine(string.Format("({0}, {1})", x, y));
-                */
-
-                l.Add(new Point(center.X + x, center.Y + y));
-				l.Add(new Point(center.X + x, center.Y - y));
-				l.Add(new Point(center.X - x, center.Y + y));
-				l.Add(new Point(center.X - x, center.Y - y));
-               
-
 				if(p > 0)
 				{
-					p += rx * rx * (1 - 2 * y);
+					p += rx * rx * (3 - 2 * y);
 				}
 				else
 				{
-                    p += rx * rx * (1 - 2 * y) + ry * ry * (1 + 2 * x);
+                    p += rx * rx * (3 - 2 * y) + 2 * ry * ry * (x + 1);
                     x += 1;
                 }
                 y -= 1;
+
+                l.Add(new Point(center.X + x, center.Y + y));
+                l.Add(new Point(center.X + x, center.Y - y));
+                l.Add(new Point(center.X - x, center.Y + y));
+                l.Add(new Point(center.X - x, center.Y - y));
             }
 			return l;
 		}

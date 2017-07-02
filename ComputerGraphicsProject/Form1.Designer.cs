@@ -45,6 +45,7 @@
             this.buttonScale = new System.Windows.Forms.Button();
             this.buttonClearing = new System.Windows.Forms.Button();
             this.buttonWPF3D = new System.Windows.Forms.Button();
+            this.buttonDebug = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // buttonTrimming
@@ -206,6 +207,16 @@
             this.buttonWPF3D.UseVisualStyleBackColor = true;
             this.buttonWPF3D.Click += new System.EventHandler(this.buttonWPF3D_Click);
             // 
+            // buttonDebug
+            // 
+            this.buttonDebug.Image = ((System.Drawing.Image)(resources.GetObject("buttonDebug.Image")));
+            this.buttonDebug.Location = new System.Drawing.Point(600, 0);
+            this.buttonDebug.Name = "buttonDebug";
+            this.buttonDebug.Size = new System.Drawing.Size(40, 40);
+            this.buttonDebug.TabIndex = 15;
+            this.buttonDebug.UseVisualStyleBackColor = true;
+            this.buttonDebug.Click += new System.EventHandler(this.buttonDebug_Click);
+            // 
             // FormPaint
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -213,6 +224,7 @@
             this.BackColor = System.Drawing.Color.Gray;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.ClientSize = new System.Drawing.Size(784, 561);
+            this.Controls.Add(this.buttonDebug);
             this.Controls.Add(this.buttonWPF3D);
             this.Controls.Add(this.buttonClearing);
             this.Controls.Add(this.buttonScale);
@@ -262,6 +274,7 @@
         private System.Windows.Forms.Button buttonScale;
         private System.Windows.Forms.Button buttonClearing;
         private System.Windows.Forms.Button buttonWPF3D;
+        private System.Windows.Forms.Button buttonDebug;
     }
 }
 

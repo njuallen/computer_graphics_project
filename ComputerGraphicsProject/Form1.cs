@@ -134,18 +134,21 @@ namespace ComputerGraphicsProject
                 // 将用户正在画的直线显示出来
                 if (mode == "DDA")
                 {
-                    currLine = new DDALine(Line_firstPoint, point, this);
+                    if (Line_firstPoint != point)
+                        currLine = new DDALine(Line_firstPoint, point, this);
                 }
                 else if (mode == "Bresenham")
                 {
-                    currLine = new BresenhamLine(Line_firstPoint, point, this);
+                    if (Line_firstPoint != point)
+                        currLine = new BresenhamLine(Line_firstPoint, point, this);
                 }
                 else if (mode == "Circle")
                 {
                     int dx = point.X - Line_firstPoint.X;
                     int dy = point.Y - Line_firstPoint.Y;
                     int distance = (int)Math.Sqrt(dx * dx + dy * dy);
-                    currLine = new Circle(Line_firstPoint, distance, this);
+                    if (distance > 0)
+                        currLine = new Circle(Line_firstPoint, distance, this);
                 }
                 else if (mode == "Ellipse")
                 {
@@ -155,13 +158,15 @@ namespace ComputerGraphicsProject
                     var x = Math.Abs((Line_firstPoint.X - point.X) / 2);
                     // y轴长度
                     var y = Math.Abs((Line_firstPoint.Y - point.Y) / 2);
-                    currLine = new Ellipse(center, x, y, this);
+                    if (x > 0 && y > 0)
+                        currLine = new Ellipse(center, x, y, this);
                 }
                 else
                 {
                     Console.WriteLine("Should not reach here");
                 }
-                currLine.Draw(drawingColor);
+                if (currLine != null)
+                    currLine.Draw(drawingColor);
                 UpdateScreen();
             }
         }
@@ -879,5 +884,20 @@ namespace ComputerGraphicsProject
             SetMouseDoubleClickEventHandler(new MouseEventHandler(DefaultMouseEventHandler));
         }
         #endregion
+
+        private void buttonDebug_Click(object sender, EventArgs e)
+        {
+            UseDefaultMouseHandler();
+            // 这是用来debug的按钮
+            // 第一个点和第二个点构成一个矩形，椭圆是这个矩形的内切椭圆
+            var center = new Point(100, 100);
+            // x轴长度
+            var x = 30;
+            // y轴长度
+            var y = 15;
+            var tmp = new Ellipse(center, x, y, this);
+            tmp.Draw(defaultColor);
+            UpdateScreen();
+        }
     }
 }
