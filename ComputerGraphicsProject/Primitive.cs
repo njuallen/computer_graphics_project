@@ -76,7 +76,6 @@ namespace ComputerGraphicsProject
 
         public virtual void Trim(Rectangle rect)
         {
-
         }
     }
 }

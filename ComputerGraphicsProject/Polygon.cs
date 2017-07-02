@@ -30,7 +30,7 @@ namespace ComputerGraphicsProject
             var len = vertices.Count;
             for (var i = 0; i < len; i++)
             {
-                var p = new BresenhamLine(vertices[i], vertices[(i + 1) % len], f);
+                var p = new DDALine(vertices[i], vertices[(i + 1) % len], f);
                 l.AddRange(p.Points());
             }
             return l;

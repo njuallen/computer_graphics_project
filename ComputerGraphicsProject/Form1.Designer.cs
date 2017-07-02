@@ -44,8 +44,7 @@
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.buttonScale = new System.Windows.Forms.Button();
             this.buttonClearing = new System.Windows.Forms.Button();
-            this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
-            this.button1 = new System.Windows.Forms.Button();
+            this.buttonWPF3D = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // buttonTrimming
@@ -197,19 +196,15 @@
             this.buttonClearing.UseVisualStyleBackColor = true;
             this.buttonClearing.Click += new System.EventHandler(this.buttonClearing_Click);
             // 
-            // backgroundWorker1
+            // buttonWPF3D
             // 
-            this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork);
-            // 
-            // button1
-            // 
-            this.button1.Image = ((System.Drawing.Image)(resources.GetObject("button1.Image")));
-            this.button1.Location = new System.Drawing.Point(560, 0);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(40, 40);
-            this.button1.TabIndex = 14;
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.buttonWPF3D.Image = ((System.Drawing.Image)(resources.GetObject("buttonWPF3D.Image")));
+            this.buttonWPF3D.Location = new System.Drawing.Point(560, 0);
+            this.buttonWPF3D.Name = "buttonWPF3D";
+            this.buttonWPF3D.Size = new System.Drawing.Size(40, 40);
+            this.buttonWPF3D.TabIndex = 14;
+            this.buttonWPF3D.UseVisualStyleBackColor = true;
+            this.buttonWPF3D.Click += new System.EventHandler(this.buttonWPF3D_Click);
             // 
             // FormPaint
             // 
@@ -218,7 +213,7 @@
             this.BackColor = System.Drawing.Color.Gray;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.ClientSize = new System.Drawing.Size(784, 561);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.buttonWPF3D);
             this.Controls.Add(this.buttonClearing);
             this.Controls.Add(this.buttonScale);
             this.Controls.Add(this.buttonRotate);
@@ -241,11 +236,11 @@
             this.Text = "画图";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.Form1_Paint);
-            this.DoubleClick += new System.EventHandler(this.Form1_DoubleClick);
-            this.MouseClick += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseClick);
-            this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseDown);
-            this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseMove);
-            this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseUp);
+            this.MouseClick += new System.Windows.Forms.MouseEventHandler(this.Line_MouseClick);
+            this.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.Line_MouseDoubleClick);
+            this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Line_MouseDown);
+            this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Line_MouseMove);
+            this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Line_MouseUp);
             this.ResumeLayout(false);
 
         }
@@ -266,8 +261,7 @@
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
         private System.Windows.Forms.Button buttonScale;
         private System.Windows.Forms.Button buttonClearing;
-        private System.ComponentModel.BackgroundWorker backgroundWorker1;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button buttonWPF3D;
     }
 }
 
