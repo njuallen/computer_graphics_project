@@ -26,7 +26,7 @@ namespace ComputerGraphicsProject
         // 用于绘图的颜色的数量，不包括空白颜色
         static int numColor = 4;
 
-        Color[] colors = { Color.Red, Color.Blue, Color.Yellow, Color.Black };
+        Color[] colors = { Color.Black, Color.Blue, Color.Yellow, Color.Brown };
 
         int defaultColor = 0;
         int drawingColor = 1;
@@ -34,7 +34,7 @@ namespace ComputerGraphicsProject
         public int fillColor = 3;
 
         // 如果这个像素点上啥都没画，就应该是这个颜色
-        Color backgroundColor = Color.Gray;
+        Color backgroundColor = Color.Snow;
 
 
         // *********************** 变量 *************************************
@@ -179,32 +179,7 @@ namespace ComputerGraphicsProject
         {
         }
 
-        private void buttonDDA_Click(object sender, EventArgs e)
-        {
-            mode = "DDA";
-            InitLine();
-        }
-
-        // Bresenham
-        private void buttonBresenham_Click(object sender, EventArgs e)
-        {
-            mode = "Bresenham";
-            InitLine();
-        }
-
-        // 圆
-        private void buttonCircle_Click(object sender, EventArgs e)
-        {
-            mode = "Circle";
-            InitLine();
-        }
-
-        // 椭圆
-        private void buttonEllipse_Click(object sender, EventArgs e)
-        {
-            mode = "Ellipse";
-            InitLine();
-        }
+      
         #endregion
 
         #region Polygon/Bezier/Bspline
@@ -255,7 +230,8 @@ namespace ComputerGraphicsProject
                 // 先把当前这条线消去
                 if (Polygon_currEdge != null)
                     Polygon_currEdge.UnDraw(drawingColor);
-                Polygon_currEdge = new DDALine(Polygon_prevPoint, point, this);
+                // 使用DDA画线貌似会出现有些线段不封闭，具体原因还不知晓
+                Polygon_currEdge = new BresenhamLine(Polygon_prevPoint, point, this);
                 Polygon_currEdge.Draw(drawingColor);
                 UpdateScreen();
             }
@@ -314,27 +290,6 @@ namespace ComputerGraphicsProject
             Polygon_currEdge = null;
             Polygon_vertices.Clear();
             Polygon_edges.Clear();
-        }
-
-        // 多边形
-        private void buttonPolygon_Click(object sender, EventArgs e)
-        {
-            mode = "Polygon";
-            InitPolygon();
-        }
-
-        // Bezier曲线
-        private void buttonBezier_Click(object sender, EventArgs e)
-        {
-            mode = "Bezier";
-            InitPolygon();
-        }
-
-        // B样条曲线
-        private void buttonBspline_Click(object sender, EventArgs e)
-        {
-            mode = "Bspline";
-            InitPolygon();
         }
         #endregion
 
@@ -513,27 +468,6 @@ namespace ComputerGraphicsProject
         private void Transformation_MouseDoubleClick(object sender, MouseEventArgs e)
         {
         }
-
-        // 平移
-        private void buttonTranslation_Click(object sender, EventArgs e)
-        {
-            mode = "Translation";
-            InitTransformation();
-        }
-
-        // 旋转
-        private void buttonRotate_Click(object sender, EventArgs e)
-        {
-            mode = "Rotate";
-            InitTransformation();
-        }
-
-        // 缩放
-        private void buttonScale_Click(object sender, EventArgs e)
-        {
-            mode = "Scale";
-            InitTransformation();
-        }
         #endregion
 
         #region Fill
@@ -577,13 +511,6 @@ namespace ComputerGraphicsProject
 
         private void Fill_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-        }
-
-        // 填充
-        private void buttonFill_Click(object sender, EventArgs e)
-        {
-            mode = "Fill";
-            InitFill();
         }
         #endregion
 
@@ -673,77 +600,6 @@ namespace ComputerGraphicsProject
         private void Trimming_MouseDoubleClick(object sender, MouseEventArgs e)
         {
         }
-
-        // 裁剪
-        private void buttonTrimming_Click(object sender, EventArgs e)
-        {
-            mode = "Trimming";
-            InitTrimming();
-        }
-        #endregion
-
-        #region Save/Clear/WPF3D
-        // 这些都使用DefaultMouseHandler
-        // 保存图片
-        private void buttonSave_Click(object sender, EventArgs e)
-        {
-            mode = "Saving";
-            UseDefaultMouseHandler();
-            // When user clicks button, show the dialog.
-            saveFileDialog1.ShowDialog();
-        }
-
-        // 清屏
-        private void buttonClearing_Click(object sender, EventArgs e)
-        {
-            mode = "Clearing";
-            UseDefaultMouseHandler();
-            Init();
-            ResetScreenBuffer();
-            // 在进行refresh的时候，屏幕就被清空了
-            Refresh();
-        }
-
-        private void saveFileDialog1_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            // Get file name.
-            var name = saveFileDialog1.FileName;
-
-            var format = ImageFormat.Jpeg;
-
-            switch (saveFileDialog1.FilterIndex)
-            {
-                case 1:
-                    format = ImageFormat.Jpeg;
-                    break;
-
-                case 2:
-                    format = ImageFormat.Bmp;
-                    break;
-
-                case 3:
-                    format = ImageFormat.Png;
-                    break;
-            }
-            if (name != "")
-            {
-                // 我们截屏不要把第一行的button给截进去
-                using (var bmp = new Bitmap(form_width, form_height))
-                {
-                    DrawToBitmap(bmp, new Rectangle(0, 0, bmp.Width, bmp.Height));
-                    bmp.Save(name, format);
-                }
-            }
-        }
-
-        // WPF3D
-        private void buttonWPF3D_Click(object sender, EventArgs e)
-        {
-            UseDefaultMouseHandler();
-            Wpf3D.MainWindow wpfwindow = new Wpf3D.MainWindow();
-            wpfwindow.Show();
-        }
-
         #endregion
 
         #region ScreenBuffer
@@ -885,19 +741,142 @@ namespace ComputerGraphicsProject
         }
         #endregion
 
-        private void buttonDebug_Click(object sender, EventArgs e)
+        #region toolStripButton click handlers
+
+        private void toolStripButtonSave_Click(object sender, EventArgs e)
+        {
+            mode = "Saving";
+            UseDefaultMouseHandler();
+            // When user clicks button, show the dialog.
+            saveFileDialog1.ShowDialog();
+        }
+
+        private void saveFileDialog1_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            // Get file name.
+            var name = saveFileDialog1.FileName;
+
+            var format = ImageFormat.Jpeg;
+
+            switch (saveFileDialog1.FilterIndex)
+            {
+                case 1:
+                    format = ImageFormat.Jpeg;
+                    break;
+
+                case 2:
+                    format = ImageFormat.Bmp;
+                    break;
+
+                case 3:
+                    format = ImageFormat.Png;
+                    break;
+            }
+            if (name != "")
+            {
+                // 我们截屏不要把第一行的button给截进去
+                using (var bmp = new Bitmap(form_width, form_height))
+                {
+                    DrawToBitmap(bmp, new Rectangle(0, 0, bmp.Width, bmp.Height));
+                    bmp.Save(name, format);
+                }
+            }
+        }
+
+        // 清屏
+        private void toolStripButtonClearing_Click(object sender, EventArgs e)
+        {
+            mode = "Clearing";
+            UseDefaultMouseHandler();
+            Init();
+            ResetScreenBuffer();
+            // 在进行refresh的时候，屏幕就被清空了
+            Refresh();
+        }
+
+        private void toolStripButtonDDA_Click(object sender, EventArgs e)
+        {
+            mode = "DDA";
+            InitLine();
+        }
+
+        private void toolStripButtonBresenham_Click(object sender, EventArgs e)
+        {
+            mode = "Bresenham";
+            InitLine();
+        }
+
+        private void toolStripButtonCircle_Click(object sender, EventArgs e)
+        {
+            mode = "Circle";
+            InitLine();
+        }
+
+        private void toolStripButtonEllipse_Click(object sender, EventArgs e)
+        {
+            mode = "Ellipse";
+            InitLine();
+        }
+
+        private void toolStripButtonPolygon_Click(object sender, EventArgs e)
+        {
+            mode = "Polygon";
+            InitPolygon();
+        }
+
+        private void toolStripButtonBezier_Click(object sender, EventArgs e)
+        {
+            mode = "Bezier";
+            InitPolygon();
+        }
+
+        private void toolStripButtonBspline_Click(object sender, EventArgs e)
+        {
+            mode = "Bspline";
+            InitPolygon();
+        }
+
+        private void toolStripButtonTrimming_Click(object sender, EventArgs e)
+        {
+            mode = "Trimming";
+            InitTrimming();
+        }
+
+        private void toolStripButtonFill_Click(object sender, EventArgs e)
+        {
+            mode = "Fill";
+            InitFill();
+        }
+
+        private void toolStripButtonTranslation_Click(object sender, EventArgs e)
+        {
+            mode = "Translation";
+            InitTransformation();
+        }
+
+        private void toolStripButtonRotate_Click(object sender, EventArgs e)
+        {
+            mode = "Rotate";
+            InitTransformation();
+        }
+
+        private void toolStripButtonScale_Click(object sender, EventArgs e)
+        {
+            mode = "Scale";
+            InitTransformation();
+        }
+       
+        private void toolStripButtonWPF3D_Click(object sender, EventArgs e)
         {
             UseDefaultMouseHandler();
-            // 这是用来debug的按钮
-            // 第一个点和第二个点构成一个矩形，椭圆是这个矩形的内切椭圆
-            var center = new Point(100, 100);
-            // x轴长度
-            var x = 30;
-            // y轴长度
-            var y = 15;
-            var tmp = new Ellipse(center, x, y, this);
-            tmp.Draw(defaultColor);
-            UpdateScreen();
+            Wpf3D.MainWindow wpfwindow = new Wpf3D.MainWindow();
+            wpfwindow.Show();
         }
+
+        private void toolStripButtonDebug_Click(object sender, EventArgs e)
+        {
+            UseDefaultMouseHandler();
+        }
+        #endregion
     }
 }

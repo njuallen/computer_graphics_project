@@ -34,7 +34,7 @@ namespace ComputerGraphicsProject
             controlPolygonPoints = new List<Point>();
             for (var i = 0; i < len - 1; i++)
             {
-                var line = new DDALine(controlVertices[i], controlVertices[i + 1], f);
+                var line = new BresenhamLine(controlVertices[i], controlVertices[i + 1], f);
                 controlPolygonPoints.AddRange(line.Points());
             }
             curvePoints = GetCurvePoints();
