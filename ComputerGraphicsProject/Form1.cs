@@ -34,7 +34,7 @@ namespace ComputerGraphicsProject
         public int fillColor = 3;
 
         // 如果这个像素点上啥都没画，就应该是这个颜色
-        Color backgroundColor = Color.Snow;
+        Color backgroundColor = Color.Cornsilk;
 
 
         // *********************** 变量 *************************************
@@ -63,10 +63,6 @@ namespace ComputerGraphicsProject
         // 我们重绘就是将我们维护的buffer中的内容重新显示到屏幕上
         private void Form1_Paint(object sender, PaintEventArgs e)
         {
-            // 值得注意的是，再Form第一次load时
-            // 没必要重绘，因为此时窗口啥都没有
-            // 如果进行重绘，反而会明显拖慢控件的绘制速度
-            // 使得界面加载变卡
             UpdateScreen();
         }
        
@@ -87,8 +83,8 @@ namespace ComputerGraphicsProject
             SetMouseUpEventHandler(new MouseEventHandler(Line_MouseUp));
             SetMouseDownEventHandler(new MouseEventHandler(Line_MouseDown));
             SetMouseMoveEventHandler(new MouseEventHandler(Line_MouseMove));
-            SetMouseClickEventHandler(new MouseEventHandler(Line_MouseClick));
-            SetMouseDoubleClickEventHandler(new MouseEventHandler(Line_MouseDoubleClick));
+            SetMouseClickEventHandler(new MouseEventHandler(DefaultMouseEventHandler));
+            SetMouseDoubleClickEventHandler(new MouseEventHandler(DefaultMouseEventHandler));
         }
 
         private void Line_MouseDown(object sender, MouseEventArgs e)
@@ -170,16 +166,6 @@ namespace ComputerGraphicsProject
                 UpdateScreen();
             }
         }
-
-        private void Line_MouseClick(object sender, MouseEventArgs e)
-        {
-        }
-
-        private void Line_MouseDoubleClick(object sender, MouseEventArgs e)
-        {
-        }
-
-      
         #endregion
 
         #region Polygon/Bezier/Bspline
@@ -206,19 +192,11 @@ namespace ComputerGraphicsProject
             Polygon_currEdge = null;
             Polygon_vertices.Clear();
             Polygon_edges.Clear();
-            SetMouseUpEventHandler(new MouseEventHandler(Polygon_MouseUp));
-            SetMouseDownEventHandler(new MouseEventHandler(Polygon_MouseDown));
+            SetMouseUpEventHandler(new MouseEventHandler(DefaultMouseEventHandler));
+            SetMouseDownEventHandler(new MouseEventHandler(DefaultMouseEventHandler));
             SetMouseMoveEventHandler(new MouseEventHandler(Polygon_MouseMove));
             SetMouseClickEventHandler(new MouseEventHandler(Polygon_MouseClick));
             SetMouseDoubleClickEventHandler(new MouseEventHandler(Polygon_MouseDoubleClick));
-        }
-
-        private void Polygon_MouseDown(object sender, MouseEventArgs e)
-        {
-        }
-
-        private void Polygon_MouseUp(object sender, MouseEventArgs e)
-        {
         }
 
         private void Polygon_MouseMove(object sender, MouseEventArgs e)
@@ -315,8 +293,8 @@ namespace ComputerGraphicsProject
             SetMouseUpEventHandler(new MouseEventHandler(Transformation_MouseUp));
             SetMouseDownEventHandler(new MouseEventHandler(Transformation_MouseDown));
             SetMouseMoveEventHandler(new MouseEventHandler(Transformation_MouseMove));
-            SetMouseClickEventHandler(new MouseEventHandler(Transformation_MouseClick));
-            SetMouseDoubleClickEventHandler(new MouseEventHandler(Transformation_MouseDoubleClick));
+            SetMouseClickEventHandler(new MouseEventHandler(DefaultMouseEventHandler));
+            SetMouseDoubleClickEventHandler(new MouseEventHandler(DefaultMouseEventHandler));
         }
 
         private void Transformation_MouseDown(object sender, MouseEventArgs e)
@@ -333,7 +311,6 @@ namespace ComputerGraphicsProject
                 {
                     if (g.Distance(point) <= 3.0)
                     {
-                        g.isSelected = true;
                         Transformation_selected = g;
                         // 被选中的图形要变色
                         // 因此我们首先把它现在的颜色给去除掉
@@ -356,7 +333,6 @@ namespace ComputerGraphicsProject
                     // 变换完成后，我们将其换成原来的颜色
                     Transformation_selected.UnDraw(selectionColor);
                     Transformation_selected.Draw(defaultColor);
-                    Transformation_selected.isSelected = false;
                     UpdateScreen();
                 }
                 // 重新初始化相关变量，以为下一次操作做好准备
@@ -460,13 +436,164 @@ namespace ComputerGraphicsProject
                 #endregion
             }
         }
+        #endregion
 
-        private void Transformation_MouseClick(object sender, MouseEventArgs e)
+        #region Edit
+        // 编辑
+        // 按下鼠标左键选中图形以及那个图形上要编辑的点，然后再拖动鼠标，图形随之改变
+        // 松开鼠标左键，操作就完成了
+        bool Edit_isMouseDown = false;
+        Point Edit_firstPoint;
+        // 被选中的图形
+        Primitive Edit_selected;
+
+        // 例如多边形有若干个点a、b、c、d、e
+        // 假设我们选中了c点，并拖动那个点
+        // 则Edit_selectedPoint即为c点
+        // Edit_prevPoints即为[a, b]
+        // Edit_nextPoints即为[d, e]
+        // 注意Edit_prevPoints和Edit_nextPoints可能为空
+        Point Edit_selectedPoint;
+        List<Point> Edit_prevPoints = new List<Point>();
+        List<Point> Edit_nextPoints = new List<Point>();
+
+        private void InitEdit()
         {
+            Edit_isMouseDown = false;
+            Edit_selected = null;
+            Edit_prevPoints.Clear();
+            Edit_nextPoints.Clear();
+            SetMouseUpEventHandler(new MouseEventHandler(Edit_MouseUp));
+            SetMouseDownEventHandler(new MouseEventHandler(Edit_MouseDown));
+            SetMouseMoveEventHandler(new MouseEventHandler(Edit_MouseMove));
+            SetMouseClickEventHandler(new MouseEventHandler(DefaultMouseEventHandler));
+            SetMouseDoubleClickEventHandler(new MouseEventHandler(DefaultMouseEventHandler));
         }
 
-        private void Transformation_MouseDoubleClick(object sender, MouseEventArgs e)
+        private void Edit_MouseDown(object sender, MouseEventArgs e)
         {
+            // 我们在鼠标左键按下时，记录初始位置
+            if (e.Button == MouseButtons.Left)
+            {
+                Edit_isMouseDown = true;
+                Point point = PointToClient(Cursor.Position);
+                Edit_firstPoint = point;
+                // 我们需要选中图形进行编辑
+                // 可以编辑的图形为直线/多边形/样条曲线
+                // 距离鼠标位置距离小于6.0的图形被选中
+                foreach (var g in graphics)
+                {
+                    if (g.graphicType == "DDA" || g.graphicType == "Bresenham"
+                        || g.graphicType == "Polygon" || g.graphicType == "Bezier"
+                        || g.graphicType == "Bspline")
+                    {
+                        bool found = false;
+                        Edit_prevPoints.Clear();
+                        Edit_nextPoints.Clear();
+                        foreach (var p in g.vertices)
+                        {
+                            // 对于一个图形，我们一次编辑只能移动一个顶点
+                            if (!found && Helper.PointDistance(point, p) <= 6.0)
+                            {
+                                found = true;
+                                Edit_selectedPoint = p;
+                            }
+                            else
+                            {
+                                // 我们在检查这个图形之前的点时，已经有点被选中了
+                                // 则接下来的点应该进入nextPoints这个List
+                                if (found)
+                                {
+                                    Edit_nextPoints.Add(p);
+                                }
+                                else
+                                {
+                                    Edit_prevPoints.Add(p);
+                                }
+                            }
+                        }
+                        if (found)
+                        {
+                            Edit_selected = g;
+                            // 把它变色
+                            Edit_selected.UnDraw(defaultColor);
+                            Edit_selected.Draw(selectionColor);
+                            UpdateScreen();
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+
+        private void Edit_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                if (Edit_selected != null)
+                {
+                    // 变换完成后，我们将其换成原来的颜色
+                    Edit_selected.UnDraw(selectionColor);
+                    Edit_selected.Draw(defaultColor);
+                    UpdateScreen();
+                }
+                // 重新初始化相关变量，以为下一次操作做好准备
+                Edit_isMouseDown = false;
+                Edit_selected = null;
+                Edit_prevPoints.Clear();
+                Edit_nextPoints.Clear();
+            }
+        }
+
+        private void Edit_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left && Edit_isMouseDown
+                && Edit_selected != null)
+            {
+                Point point = PointToClient(Cursor.Position);
+                var dx = point.X - Edit_firstPoint.X;
+                var dy = point.Y - Edit_firstPoint.Y;
+                Edit_firstPoint = point;
+                // 我们只需平移选中的那个点
+                // 我们平移的量是两次MouseMove Event之间的鼠标的移动量
+                // 这一次移动好之后，图形就到新位置了
+                // 下一次移动的向量当然要从那个位置开始重新移动
+                Edit_selectedPoint.X += dx;
+                Edit_selectedPoint.Y += dy;
+
+                // 擦除
+                Edit_selected.UnDraw(selectionColor);
+                // 重绘
+                var l = Helper.CopyList(Edit_prevPoints);
+                l.Add(new Point(Edit_selectedPoint.X, Edit_selectedPoint.Y));
+                l.AddRange(Helper.CopyList(Edit_nextPoints));
+                graphics.Remove(Edit_selected);
+                switch(Edit_selected.graphicType)
+                {
+                    case "DDA":
+                        Edit_selected = new DDALine(l, this);
+                        break;
+                    case "Bresenham":
+                        Edit_selected = new BresenhamLine(l, this);
+                        break;
+                    case "Polygon":
+                        Edit_selected = new Polygon(l, this);
+                        break;
+                    case "Bezier":
+                        Edit_selected = new Bezier(l, this);
+                        break;
+                    case "Bspline":
+                        Edit_selected = new Bspline(l, this);
+                        break;
+                    default:
+                        Console.WriteLine("Should not reach here!");
+                        break;
+                }
+                graphics.Add(Edit_selected);
+                // 重绘
+                Edit_selected.Draw(selectionColor);
+                UpdateScreen();
+            }
         }
         #endregion
 
@@ -560,7 +687,8 @@ namespace ComputerGraphicsProject
                 Rectangle rect = new Rectangle(x, y, width, height);
                 // 将直线和多边形都裁剪一遍
                 foreach (var g in graphics)
-                    if (g.graphicType == "Line" || g.graphicType == "Polygon")
+                    if (g.graphicType == "DDA" || g.graphicType == "Bresenham" 
+                        || g.graphicType == "Polygon")
                     {
                         g.UnDraw(defaultColor);
                         g.Trim(rect);
@@ -678,11 +806,12 @@ namespace ComputerGraphicsProject
 
         private void InitHandlers()
         {
+            // 刚启动时，我们默认时Bresenham画直线
             currMouseUpEventHandler = new MouseEventHandler(Line_MouseUp);
             currMouseDownEventHandler = new MouseEventHandler(Line_MouseDown);
             currMouseMoveEventHandler = new MouseEventHandler(Line_MouseMove);
-            currMouseClickEventHandler = new MouseEventHandler(Line_MouseClick);
-            currMouseDoubleClickEventHandler = new MouseEventHandler(Line_MouseDoubleClick);
+            currMouseClickEventHandler = new MouseEventHandler(DefaultMouseEventHandler);
+            currMouseDoubleClickEventHandler = new MouseEventHandler(DefaultMouseEventHandler);
         }
 
         private void SetMouseUpEventHandler(MouseEventHandler handler)
@@ -871,6 +1000,12 @@ namespace ComputerGraphicsProject
             UseDefaultMouseHandler();
             Wpf3D.MainWindow wpfwindow = new Wpf3D.MainWindow();
             wpfwindow.Show();
+        }
+
+        private void toolStripButtonEdit_Click(object sender, EventArgs e)
+        {
+            mode = "Edit";
+            InitEdit();
         }
 
         private void toolStripButtonDebug_Click(object sender, EventArgs e)

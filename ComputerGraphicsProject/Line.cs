@@ -9,7 +9,6 @@ namespace ComputerGraphicsProject
         protected Point a, b;
         public Line(Point pa, Point pb)
         {
-            graphicType = "Line";
             // a is on the left, b is on the right
             if (pa.X < pb.X)
             {
@@ -21,6 +20,29 @@ namespace ComputerGraphicsProject
                 a = pb;
                 b = pa;
             }
+            vertices.Add(a);
+            vertices.Add(b);
+        }
+
+        public Line(List<Point> lp)
+        {
+            if (lp.Count != 2)
+                Console.WriteLine("Line: invalid list!");
+            var pa = lp[0];
+            var pb = lp[1];
+            // a is on the left, b is on the right
+            if (pa.X < pb.X)
+            {
+                a = pa;
+                b = pb;
+            }
+            else
+            {
+                a = pb;
+                b = pa;
+            }
+            vertices.Add(a);
+            vertices.Add(b);
         }
 
         // 求两条直线的交点
@@ -123,13 +145,6 @@ namespace ComputerGraphicsProject
 			var yMax = rect.Y + rect.Height;
 			var yMin = rect.Y;
 
-            /*
-            Console.WriteLine("Trimming");
-            Console.WriteLine(string.Format("rect: {0}", rect.ToString()));
-            Console.WriteLine(string.Format("a: {0}", a.ToString()));
-            Console.WriteLine(string.Format("b: {0}", b.ToString()));
-            */
-
             if (aInRect != bInRect)
 			{
 				// 线段的一个端点在矩形内部，另一个端点在矩形外部
@@ -145,9 +160,6 @@ namespace ComputerGraphicsProject
 					inPoint = b;
 					outPoint = a;
 				}
-
-				// Console.WriteLine(string.Format("inPoint: {0}", inPoint.ToString()));
-				// Console.WriteLine(string.Format("outPoint: {0}", outPoint.ToString()));
 
 				// 当线段垂直或水平时，进行特殊处理
 				if (inPoint.X == outPoint.X)
@@ -181,43 +193,32 @@ namespace ComputerGraphicsProject
 					var rightPoint = new Point(xMax, Convert.ToInt32(inPoint.Y + k * (xMax - inPoint.X)));
 					var upperPoint = new Point(Convert.ToInt32(inPoint.X + (yMin - inPoint.Y) / k), yMin);
 					var lowerPoint = new Point(Convert.ToInt32(inPoint.X + (yMax - inPoint.Y) / k), yMax);
-                    /*
-					Console.WriteLine(string.Format("leftPoint: {0}", leftPoint.ToString()));
-					Console.WriteLine(string.Format("rightPoint: {0}", rightPoint.ToString()));
-					Console.WriteLine(string.Format("upperPoint: {0}", upperPoint.ToString()));
-					Console.WriteLine(string.Format("lowerPoint: {0}", lowerPoint.ToString()));
-                    */
+                   
                     List<Point> l = new List<Point>();
                     if (Helper.IsInBetween(a, b, leftPoint) && Helper.IsInRectangle(rect, leftPoint))
                     {
-                        // Console.WriteLine("left");
                         l.Add(leftPoint);
                     }
 
                     if (Helper.IsInBetween(a, b, rightPoint) && Helper.IsInRectangle(rect, rightPoint))
                     {
-                        // Console.WriteLine("right");
                         l.Add(rightPoint);
                     }
 
                     if (Helper.IsInBetween(a, b, upperPoint) && Helper.IsInRectangle(rect, upperPoint))
                     {
-                        // Console.WriteLine("upper");
                         l.Add(upperPoint);
                     }
 
                     if (Helper.IsInBetween(a, b, lowerPoint) && Helper.IsInRectangle(rect, lowerPoint))
                     {
-                        // Console.WriteLine("lower");
                         l.Add(lowerPoint);
                     }
 
                     // 交点个数应该为1
-                    // Console.WriteLine(string.Format("count: {0}", l.Count));
                     if (l.Count != 1)
                         return;
                     outPoint = l[0];
-                    // Console.WriteLine(string.Format("inPoint: {0} outPoint: {1}", inPoint.ToString(), outPoint.ToString()));
                 }
 
                 // 重新确定端点，并重新计算线段上的点
@@ -225,7 +226,6 @@ namespace ComputerGraphicsProject
 				a = inPoint;
 				b = outPoint;
                 
-                // Console.WriteLine(string.Format("a: {0} b: {1}", a.ToString(), b.ToString()));
                 points = Points();
 			}
 			else if(!aInRect && !bInRect)
@@ -270,48 +270,40 @@ namespace ComputerGraphicsProject
                     var rightPoint = new Point(xMax, Convert.ToInt32(a.Y + k * (xMax - a.X)));
                     var upperPoint = new Point(Convert.ToInt32(a.X + (yMin - a.Y) / k), yMin);
                     var lowerPoint = new Point(Convert.ToInt32(a.X + (yMax - a.Y) / k), yMax);
-                    /*
-                    Console.WriteLine(string.Format("leftPoint: {0}", leftPoint.ToString()));
-                    Console.WriteLine(string.Format("rightPoint: {0}", rightPoint.ToString()));
-                    Console.WriteLine(string.Format("upperPoint: {0}", upperPoint.ToString()));
-                    Console.WriteLine(string.Format("lowerPoint: {0}", lowerPoint.ToString()));
-                    */
 
                     List<Point> l = new List<Point>();
                     if (Helper.IsInBetween(a, b, leftPoint) && Helper.IsInRectangle(rect, leftPoint))
                     {
-                        // Console.WriteLine("left");
                         l.Add(leftPoint);
                     }
 
                     if (Helper.IsInBetween(a, b, rightPoint) && Helper.IsInRectangle(rect, rightPoint))
                     {
-                        // Console.WriteLine("right");
                         l.Add(rightPoint);
                     }
 
                     if (Helper.IsInBetween(a, b, upperPoint) && Helper.IsInRectangle(rect, upperPoint))
                     {
-                        // Console.WriteLine("upper");
                         l.Add(upperPoint);
                     }
 
                     if (Helper.IsInBetween(a, b, lowerPoint) && Helper.IsInRectangle(rect, lowerPoint))
                     {
-                        // Console.WriteLine("lower");
                         l.Add(lowerPoint);
                     }
 
                     // 交点个数应该为2
-                    // Console.WriteLine(string.Format("count: {0}", l.Count));
                     if (l.Count != 2)
                         return;
                     a = l[0];
                     b = l[1];
-                    // Console.WriteLine(string.Format("a: {0} b: {1}", a.ToString(), b.ToString()));
                 }
 				points = Points();
 			}
+            // 更新vertices
+            vertices.Clear();
+            vertices.Add(a);
+            vertices.Add(b);
 		}  
 
         public override void Translation(int dx, int dy)
@@ -326,6 +318,9 @@ namespace ComputerGraphicsProject
                 var p = new Point(points[i].X + dx, points[i].Y + dy);
                 points[i] = p;
             }
+            vertices.Clear();
+            vertices.Add(a);
+            vertices.Add(b);
         }
 
         public override void Rotate(Point c, double sin, double cos)
@@ -335,6 +330,9 @@ namespace ComputerGraphicsProject
             a = Helper.Rotate(c, a, sin, cos);
             b = Helper.Rotate(c, b, sin, cos);
             points = Points();
+            vertices.Clear();
+            vertices.Add(a);
+            vertices.Add(b);
         }
 
         public override void Scale(Point center, double scaleFactor)
@@ -342,6 +340,9 @@ namespace ComputerGraphicsProject
             a = Helper.Scale(center, a, scaleFactor);
             b = Helper.Scale(center, b, scaleFactor);
             points = Points();
+            vertices.Clear();
+            vertices.Add(a);
+            vertices.Add(b);
         }
     }
 }

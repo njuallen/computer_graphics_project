@@ -8,6 +8,14 @@ namespace ComputerGraphicsProject
     {
         public BresenhamLine(Point pa, Point pb, FormPaint form) : base(pa, pb)
         {
+            graphicType = "Bresenham";
+            f = form;
+            points = Points();
+        }
+
+        public BresenhamLine(List<Point> lp, FormPaint form) : base(lp)
+        {
+            graphicType = "Bresenham";
             f = form;
             points = Points();
         }

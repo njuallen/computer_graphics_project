@@ -33,6 +33,7 @@
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripButtonSave = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonClearing = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButtonEdit = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonDDA = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonBresenham = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonCircle = new System.Windows.Forms.ToolStripButton();
@@ -61,10 +62,11 @@
             // toolStrip1
             // 
             this.toolStrip1.AutoSize = false;
-            this.toolStrip1.BackColor = System.Drawing.Color.Snow;
+            this.toolStrip1.BackColor = System.Drawing.Color.Silver;
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripButtonSave,
             this.toolStripButtonClearing,
+            this.toolStripButtonEdit,
             this.toolStripButtonDDA,
             this.toolStripButtonBresenham,
             this.toolStripButtonCircle,
@@ -108,6 +110,18 @@
             this.toolStripButtonClearing.Size = new System.Drawing.Size(40, 40);
             this.toolStripButtonClearing.Text = "清空";
             this.toolStripButtonClearing.Click += new System.EventHandler(this.toolStripButtonClearing_Click);
+            // 
+            // toolStripButtonEdit
+            // 
+            this.toolStripButtonEdit.AutoSize = false;
+            this.toolStripButtonEdit.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButtonEdit.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonEdit.Image")));
+            this.toolStripButtonEdit.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.toolStripButtonEdit.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonEdit.Name = "toolStripButtonEdit";
+            this.toolStripButtonEdit.Size = new System.Drawing.Size(40, 40);
+            this.toolStripButtonEdit.Text = "编辑图形";
+            this.toolStripButtonEdit.Click += new System.EventHandler(this.toolStripButtonEdit_Click);
             // 
             // toolStripButtonDDA
             // 
@@ -281,21 +295,20 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.Color.Snow;
+            this.BackColor = System.Drawing.Color.Cornsilk;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.ClientSize = new System.Drawing.Size(784, 561);
             this.Controls.Add(this.toolStrip1);
             this.DoubleBuffered = true;
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
-            this.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "FormPaint";
             this.Text = "画图";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.Form1_Paint);
-            this.MouseClick += new System.Windows.Forms.MouseEventHandler(this.Line_MouseClick);
-            this.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.Line_MouseDoubleClick);
+            this.MouseClick += new System.Windows.Forms.MouseEventHandler(this.DefaultMouseEventHandler);
+            this.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.DefaultMouseEventHandler);
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Line_MouseDown);
             this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Line_MouseMove);
             this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Line_MouseUp);
@@ -318,12 +331,13 @@
         private System.Windows.Forms.ToolStripButton toolStripButtonBezier;
         private System.Windows.Forms.ToolStripButton toolStripButtonBspline;
         private System.Windows.Forms.ToolStripButton toolStripButtonTrimming;
-        private System.Windows.Forms.ToolStripButton toolStripButtonFill;
+        private System.Windows.Forms.ToolStripButton toolStripButtonEdit;
         private System.Windows.Forms.ToolStripButton toolStripButtonTranslation;
         private System.Windows.Forms.ToolStripButton toolStripButtonRotate;
         private System.Windows.Forms.ToolStripButton toolStripButtonScale;
         private System.Windows.Forms.ToolStripButton toolStripButtonWPF3D;
         private System.Windows.Forms.ToolStripButton toolStripButtonDebug;
+        private System.Windows.Forms.ToolStripButton toolStripButtonFill;
     }
 }
 

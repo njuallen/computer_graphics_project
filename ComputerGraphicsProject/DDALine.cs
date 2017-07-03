@@ -8,6 +8,14 @@ namespace ComputerGraphicsProject
     {
         public DDALine(Point pa, Point pb, FormPaint form) : base(pa, pb)
         {
+            graphicType = "DDA";
+            f = form;
+            points = Points();
+        }
+
+        public DDALine(List<Point> lp, FormPaint form) : base(lp)
+        {
+            graphicType = "DDA";
             f = form;
             points = Points();
         }

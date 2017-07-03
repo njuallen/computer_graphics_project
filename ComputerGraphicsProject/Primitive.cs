@@ -10,7 +10,8 @@ namespace ComputerGraphicsProject
     // 这是基类，定义了基本图元类型
     class Primitive
     {
-        public bool isSelected = false;
+        // 图形的端点（仅针对直线、多边形、样条曲线（控制端点））
+        public List<Point> vertices = new List<Point>();
         // 这个图元边界上的点
         protected List<Point> points;
 

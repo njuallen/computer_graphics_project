@@ -9,8 +9,6 @@ namespace ComputerGraphicsProject
     {
         // 一个样条曲线图形包含两个部分
         // 控制多边形 + 生成的样条曲线
-        // 控制多边形上的顶点（包含开始结束端点及其他控制顶点
-        protected List<Point> controlVertices;
         // 控制多边形上的点
         protected List<Point> controlPolygonPoints;
         // 生成的样条曲线上的点
@@ -19,7 +17,7 @@ namespace ComputerGraphicsProject
         public Spline(List<Point> lp)
         {
             graphicType = "Spline";
-            controlVertices = Helper.RemoveDuplicatedPoint(lp);
+            vertices = Helper.RemoveDuplicatedPoint(lp);
             points = Points();
         }
 
@@ -30,17 +28,17 @@ namespace ComputerGraphicsProject
 
         public override List<Point> Points()
         {
-            var len = controlVertices.Count;
+            var len = vertices.Count;
             controlPolygonPoints = new List<Point>();
             for (var i = 0; i < len - 1; i++)
             {
-                var line = new BresenhamLine(controlVertices[i], controlVertices[i + 1], f);
+                var line = new BresenhamLine(vertices[i], vertices[i + 1], f);
                 controlPolygonPoints.AddRange(line.Points());
             }
             curvePoints = GetCurvePoints();
             var result = new List<Point>();
             // 手动将两个list合并成一个新的list
-            foreach (var p in controlVertices)
+            foreach (var p in vertices)
                 result.Add(p);
             foreach (var p in controlPolygonPoints)
                 result.Add(p);
@@ -51,11 +49,11 @@ namespace ComputerGraphicsProject
 
         public override void Translation(int dx, int dy)
         {
-            var len = controlVertices.Count;
+            var len = vertices.Count;
             for (var i = 0; i < len; i++)
             {
-                var p = new Point(controlVertices[i].X + dx, controlVertices[i].Y + dy);
-                controlVertices[i] = p;
+                var p = new Point(vertices[i].X + dx, vertices[i].Y + dy);
+                vertices[i] = p;
             }
 
             len = controlPolygonPoints.Count;
@@ -83,23 +81,23 @@ namespace ComputerGraphicsProject
         public override void Rotate(Point center, double sin, double cos)
         {
             // 只旋转控制节点
-            var len = controlVertices.Count;
+            var len = vertices.Count;
             for (var i = 0; i < len; i++)
             {
-                var p = Helper.Rotate(center, controlVertices[i], sin, cos);
-                controlVertices[i] = p;
+                var p = Helper.Rotate(center, vertices[i], sin, cos);
+                vertices[i] = p;
             }
-            controlVertices = Helper.RemoveDuplicatedPoint(controlVertices);
+            vertices = Helper.RemoveDuplicatedPoint(vertices);
             points = Points();
         }
 
         public override void Scale(Point center, double scaleFactor)
         {
-            var len = controlVertices.Count;
+            var len = vertices.Count;
             for (var i = 0; i < len; i++)
             {
-                var p = Helper.Scale(center, controlVertices[i], scaleFactor);
-                controlVertices[i] = p;
+                var p = Helper.Scale(center, vertices[i], scaleFactor);
+                vertices[i] = p;
             }
             points = Points();
         }

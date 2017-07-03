@@ -8,7 +8,6 @@ namespace ComputerGraphicsProject
     class Polygon : Primitive
     {
         // 多边形的几个顶点
-        private List<Point> vertices;
         public Polygon(List<Point> lp, FormPaint form)
         {
             f = form;

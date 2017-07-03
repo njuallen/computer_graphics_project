@@ -47,6 +47,21 @@ namespace ComputerGraphicsProject
             return result;
         }
 
+        public static List<Point> CopyList(List<Point> lp)
+        {
+            var result = new List<Point>();
+            foreach (var p in lp)
+                result.Add(new Point(p.X, p.Y));
+            return result;
+        }
+
+        public static double PointDistance(Point a, Point b)
+        {
+            var dx = a.X - b.X;
+            var dy = a.Y - b.Y;
+            return Math.Sqrt(dx * dx + dy * dy);
+        }
+
         // 求出点a相对于点center旋转b度之后的位置
         public static Point Rotate(Point center, Point a, double sin, double cos)
         {

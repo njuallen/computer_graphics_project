@@ -8,6 +8,7 @@ namespace ComputerGraphicsProject
     {
         public Bezier(List<Point> lp, FormPaint form) : base(lp)
         {
+            graphicType = "Bezier";
             f = form;
         }
 
@@ -28,9 +29,9 @@ namespace ComputerGraphicsProject
 
         private Point DeCasteljau(double u)
         {
-            var n = controlVertices.Count;
+            var n = vertices.Count;
             var q = new List<Point>();
-            foreach (var p in controlVertices)
+            foreach (var p in vertices)
                 q.Add(p);
 
             for (var k = 0; k < n; k++)

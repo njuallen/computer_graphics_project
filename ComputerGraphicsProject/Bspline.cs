@@ -8,6 +8,7 @@ namespace ComputerGraphicsProject
     {
         public Bspline(List<Point> lp, FormPaint form) : base(lp)
         {
+            graphicType = "Bspline";
             f = form;
         }
 
@@ -17,7 +18,7 @@ namespace ComputerGraphicsProject
 		{
 			var result = new List<Point>();
 
-			var numPoints = controlVertices.Count;
+			var numPoints = vertices.Count;
 			var samplePoints = 1000;
 			var numSegments = numPoints - 3;
 
@@ -80,12 +81,12 @@ namespace ComputerGraphicsProject
         // 获取第i个control vertex
         private Point GetPoint(int i)
         {
-            var len = controlVertices.Count;
+            var len = vertices.Count;
             if (i < 0)
-                return controlVertices[0];
+                return vertices[0];
             if (i >= len)
-                return controlVertices[len - 1];
-            return controlVertices[i];
+                return vertices[len - 1];
+            return vertices[i];
         }
 
         /*
