@@ -131,9 +131,7 @@ namespace ComputerGraphicsProject
             }
         }
 
-        // 利用矩形rect对线段进行裁剪
-        // 如果线段有部分在矩形内部，则只保留那部分
-        // 如果线段完全在矩形内部或者完全在矩形外部， 则不变
+        /*
         public override void Trim(Rectangle rect)
 		{
 			bool aInRect = Helper.IsInRectangle(rect, a);
@@ -305,6 +303,65 @@ namespace ComputerGraphicsProject
             vertices.Add(a);
             vertices.Add(b);
 		}  
+        */
+
+        // 利用矩形rect对线段进行裁剪
+        // 如果线段有部分在矩形内部，则只保留那部分
+        // 如果线段完全在矩形内部或者完全在矩形外部， 则不变
+        // Liang-Barsky Line Clipping algorithm
+        public override void Trim(Rectangle rect)
+        {
+            // 矩形的边界
+            var xmax = rect.X + rect.Width;
+            var xmin = rect.X;
+            var ymax = rect.Y + rect.Height;
+            var ymin = rect.Y;
+            var dx = b.X - a.X;
+            var dy = b.Y - a.Y;
+
+            double tmin = 0.0, tmax = 1.0;
+
+            List<double> tvalue = new List<double>();
+            // bottom
+            tvalue.Add((double)(ymax - a.Y) / dy);
+            // top
+            tvalue.Add((double)(ymin - a.Y) / dy);
+            // left
+            tvalue.Add((double)(xmin - a.X) / dx);
+            // right
+            tvalue.Add((double)(xmax - a.X) / dx);
+            // 裁剪框各边法向量的X与Y值
+            double[] nvecX = { 0.0, 0.0, -1.0, 1.0 };
+            double[] nvecY = { 1.0, -1.0, 0.0, 0.0 };
+            for (var i = 0; i < 4; i++)
+            {
+                if (tvalue[i] >= tmin && tvalue[i] <= tmax)
+                {
+                    // use inner product to check whether, it's in edge or out edge;
+                    var innerProduct = nvecX[i] * dx + nvecY[i] * dy;
+                    // entering edge
+                    if (innerProduct < 0)
+                        tmin = tvalue[i];
+                    // exiting edge
+                    else if (innerProduct > 0)
+                        tmax = tvalue[i];
+                }
+            }
+            if(tmin < tmax)
+            {
+                // 裁剪完成，更新线段相关信息
+                var na = new Point(Convert.ToInt32(a.X + dx * tmin), 
+                    Convert.ToInt32(a.Y + dy * tmin));
+                var nb = new Point(Convert.ToInt32(a.X + dx * tmax),
+                    Convert.ToInt32(a.Y + dy * tmax));
+                a = na;
+                b = nb;
+                points = Points();
+                vertices.Clear();
+                vertices.Add(a);
+                vertices.Add(b);
+            }
+        }
 
         public override void Translation(int dx, int dy)
         {
@@ -322,6 +379,7 @@ namespace ComputerGraphicsProject
             vertices.Add(a);
             vertices.Add(b);
         }
+        
 
         public override void Rotate(Point c, double sin, double cos)
         {
