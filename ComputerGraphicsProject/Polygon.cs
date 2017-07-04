@@ -37,18 +37,27 @@ namespace ComputerGraphicsProject
 
         public override void Trim(Rectangle rect)
         {
-            // 先使用左侧边框
-            // Console.WriteLine("Left");
-            TrimWithOneSide(rect, new Line(new Point(rect.X, rect.Y), new Point(rect.X, rect.Bottom)), true);
-            // 上侧边框
-            // Console.WriteLine("Up");
-            TrimWithOneSide(rect, new Line(new Point(rect.X, rect.Y), new Point(rect.Right, rect.Y)), true);
-            // 右侧边框
-            // Console.WriteLine("Right");
-            TrimWithOneSide(rect, new Line(new Point(rect.Right, rect.Y), new Point(rect.Right, rect.Bottom)), false);
-            // 下侧边框
-            // Console.WriteLine("Down");
-            TrimWithOneSide(rect, new Line(new Point(rect.X, rect.Bottom), new Point(rect.Right, rect.Bottom)), false);
+            bool found = false;
+            // 当且仅当有点在矩形内部时才需要裁剪
+            foreach (var p in points)
+            {
+                if(Helper.IsInRectangle(rect, p))
+                {
+                    found = true;
+                    break;
+                }
+            }
+            if (found)
+            {
+                // 先使用左侧边框
+                TrimWithOneSide(rect, new Line(new Point(rect.X, rect.Y), new Point(rect.X, rect.Bottom)), true);
+                // 上侧边框
+                TrimWithOneSide(rect, new Line(new Point(rect.X, rect.Y), new Point(rect.Right, rect.Y)), true);
+                // 右侧边框
+                TrimWithOneSide(rect, new Line(new Point(rect.Right, rect.Y), new Point(rect.Right, rect.Bottom)), false);
+                // 下侧边框
+                TrimWithOneSide(rect, new Line(new Point(rect.X, rect.Bottom), new Point(rect.Right, rect.Bottom)), false);
+            }
             // 重新计算边界上的点
             points = Points();
         }
@@ -64,18 +73,6 @@ namespace ComputerGraphicsProject
             {
                 var a = vertices[i];
                 var b = vertices[(i + 1) % len];
-                /*
-                Console.WriteLine("*************************************");
-                Console.WriteLine(a.ToString());
-                Console.WriteLine(b.ToString());
-                Console.WriteLine("--------------------------------------");
-                foreach (var p in result)
-                {
-                    Console.WriteLine(p.ToString());
-                }
-                Console.WriteLine("");
-                */
-
                 var aInWindow = Line.isInHalfSpace(l, a, side);
                 var bInWindow = Line.isInHalfSpace(l, b, side);
                 if (!aInWindow && !bInWindow)
@@ -91,20 +88,31 @@ namespace ComputerGraphicsProject
                 else if(!aInWindow && bInWindow)
                 {
                     // 起始点在外侧，终止点在内测，则输出交点和终止点
-                    Point intersection = Line.Intersect(l, new Line(a, b));
+                    Point intersection;
+                    // 这是竖直线
+                    if (l.a.X == l.b.X)
+                        intersection = EdgeIntersectWithX(new BresenhamLine(a, b, f), l.a.X);
+                    else
+                        intersection = EdgeIntersectWithY(new BresenhamLine(a, b, f), l.a.Y);
                     result.Add(intersection);
                     result.Add(b);
                 }
                 else
                 {
                     // 起始点在内侧，终止点在外测，则输出交点
-                    Point intersection = Line.Intersect(l, new Line(a, b));
+                    Point intersection;
+                    // 这是竖直线
+                    if (l.a.X == l.b.X)
+                        intersection = EdgeIntersectWithX(new BresenhamLine(a, b, f), l.a.X);
+                    else
+                        intersection = EdgeIntersectWithY(new BresenhamLine(a, b, f), l.a.Y);
                     result.Add(intersection);
                 }
             }
             vertices = result;
         }
 
+        #region Transformation
         public override void Translation(int dx, int dy)
         {
             var len = vertices.Count;
@@ -141,7 +149,8 @@ namespace ComputerGraphicsProject
             }
             points = Points();
         }
-
+        #endregion
+        #region ScanLineFill
         // 对此多边形进行扫描线求交，返回此多边形内部的点坐标
         // Naive implementation，使用了简单的逐边求交，
         // 没有使用复杂的数据结构，没有使用整数增量运算求交
@@ -329,14 +338,28 @@ namespace ComputerGraphicsProject
                 // 这样会导致填充时，靠近直线有些像素就填充不起来，效果不好
                 // 因此我们不如直接把直线上的点给算出来，再直接找交点
                 var l = new BresenhamLine(a, b, f);
-                foreach(var p in l.points)
-                    if(p.Y == y)
-                    {
-                        x = p.X;
-                        break;
-                    }
+                x = EdgeIntersectWithY(l, y).X;
             }
             return x;
+        }
+        #endregion
+
+        // 返回多边形的一条边与一条竖直线的交点
+        private Point EdgeIntersectWithX(BresenhamLine l, int x)
+        {
+            foreach (var p in l.points)
+                if (p.X == x)
+                    return p;
+            return new Point(-1, -1);
+        }
+
+        // 返回多边形的一条边与一条水平线的交点
+        private Point EdgeIntersectWithY(BresenhamLine l, int y)
+        {
+            foreach (var p in l.points)
+                if (p.Y == y)
+                    return p;
+            return new Point(-1, -1);
         }
     }
 }

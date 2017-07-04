@@ -42,13 +42,13 @@
             this.toolStripButtonBezier = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonBspline = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonTrimming = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButtonScanFill = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonFill = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonTranslation = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonRotate = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonScale = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonWPF3D = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonDebug = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButtonScanFill = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -221,6 +221,18 @@
             this.toolStripButtonTrimming.Text = "裁剪";
             this.toolStripButtonTrimming.Click += new System.EventHandler(this.toolStripButtonTrimming_Click);
             // 
+            // toolStripButtonScanFill
+            // 
+            this.toolStripButtonScanFill.AutoSize = false;
+            this.toolStripButtonScanFill.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButtonScanFill.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonScanFill.Image")));
+            this.toolStripButtonScanFill.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.toolStripButtonScanFill.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonScanFill.Name = "toolStripButtonScanFill";
+            this.toolStripButtonScanFill.Size = new System.Drawing.Size(40, 40);
+            this.toolStripButtonScanFill.Text = "扫描填充";
+            this.toolStripButtonScanFill.Click += new System.EventHandler(this.toolStripButtonScanFill_Click);
+            // 
             // toolStripButtonFill
             // 
             this.toolStripButtonFill.AutoSize = false;
@@ -291,19 +303,8 @@
             this.toolStripButtonDebug.Name = "toolStripButtonDebug";
             this.toolStripButtonDebug.Size = new System.Drawing.Size(40, 40);
             this.toolStripButtonDebug.Text = "调试专用按钮";
+            this.toolStripButtonDebug.Visible = false;
             this.toolStripButtonDebug.Click += new System.EventHandler(this.toolStripButtonDebug_Click);
-            // 
-            // toolStripButtonScanFill
-            // 
-            this.toolStripButtonScanFill.AutoSize = false;
-            this.toolStripButtonScanFill.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButtonScanFill.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonScanFill.Image")));
-            this.toolStripButtonScanFill.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.toolStripButtonScanFill.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButtonScanFill.Name = "toolStripButtonScanFill";
-            this.toolStripButtonScanFill.Size = new System.Drawing.Size(40, 40);
-            this.toolStripButtonScanFill.Text = "泛滥填充";
-            this.toolStripButtonScanFill.Click += new System.EventHandler(this.toolStripButtonScanFill_Click);
             // 
             // FormPaint
             // 
@@ -319,6 +320,7 @@
             this.MinimizeBox = false;
             this.Name = "FormPaint";
             this.Text = "画图";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormPaint_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.Form1_Paint);
             this.MouseClick += new System.Windows.Forms.MouseEventHandler(this.DefaultMouseEventHandler);

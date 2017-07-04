@@ -55,7 +55,20 @@ namespace ComputerGraphicsProject
                 l.Add(new Point(center.X - x, center.Y - y));
             }
 
-			p = Convert.ToInt32(ry * ry * (x + 0.5) * (x + 0.5) + rx * rx * (y - 1) * (y - 1) - rx * rx * ry * ry);
+            // 我们在进行椭圆放缩时，如果拼命拖动鼠标
+            // tmp的值可能会很大，乃至超出Int的表示范围
+            // 就会报Exception
+            // 此时我们就将原来椭圆上的点返回，从显示上来看，就是用户无法再放大了
+            try
+            {
+                double tmp = ry * ry * (x + 0.5) * (x + 0.5) + rx * rx * (y - 1) * (y - 1) - rx * rx * ry * ry;
+                p = Convert.ToInt32(tmp);
+            }
+            catch (System.Exception)
+            {
+                return points;
+            }
+           
 
             // 区域2，沿y方向取样
             while (y >= 0)

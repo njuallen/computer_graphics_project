@@ -43,10 +43,18 @@ namespace ComputerGraphicsProject
         // 我们画出的图形
         List<Primitive> graphics = new List<Primitive>();
 
+        // 当前图片是否需要被保存
+        // 在发生编辑之后，就将其置为true
+        // 那怎么判断是否发生编辑呢？我们直接追踪graphics的变化
+        // 如果向graphics里面加东西了，则肯定需要保存
+        // 在保存之后，就将其置为false
+        bool needSave = false;
+
         string mode = "Bresenham";
 
         private void Init()
         {
+            needSave = false;
             myCanvas = new Bitmap(form_width, form_height - 40);
             graphics.Clear();
             InitHandlers();
@@ -109,6 +117,7 @@ namespace ComputerGraphicsProject
                 {
                     currLine.UnDraw(drawingColor);
                     currLine.Draw(defaultColor);
+                    needSave = true;
                     graphics.Add(currLine);
                     UpdateScreen();
                 }
@@ -261,6 +270,7 @@ namespace ComputerGraphicsProject
                 else
                     tmp = new Bspline(Polygon_vertices, this);
                 tmp.Draw(defaultColor);
+                needSave = true;
                 graphics.Add(tmp);
                 UpdateScreen();
             }
@@ -589,6 +599,7 @@ namespace ComputerGraphicsProject
                         Console.WriteLine("Should not reach here!");
                         break;
                 }
+                needSave = true;
                 graphics.Add(Edit_selected);
                 // 重绘
                 Edit_selected.Draw(selectionColor);
@@ -635,6 +646,7 @@ namespace ComputerGraphicsProject
                 if (lp != null)
                 {
                     var block = new Block(lp, this);
+                    needSave = true;
                     graphics.Add(block);
                     // 立即画出来
                     block.Draw(fillColor);
@@ -951,6 +963,7 @@ namespace ComputerGraphicsProject
                 {
                     DrawToBitmap(bmp, new Rectangle(0, 0, bmp.Width, bmp.Height));
                     bmp.Save(name, format);
+                    needSave = false;
                 }
             }
         }
@@ -1056,6 +1069,21 @@ namespace ComputerGraphicsProject
         {
             mode = "Edit";
             InitEdit();
+        }
+
+        private void FormPaint_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (needSave)
+            {
+                DialogResult dialogResult = MessageBox.Show("您的作品尚未保存，是否保存？", "退出", MessageBoxButtons.YesNo);
+                if (dialogResult == DialogResult.Yes)
+                {
+                    // 保存文件
+                    saveFileDialog1.ShowDialog();
+                    // 暂时不关闭窗口
+                    e.Cancel = true;
+                }
+            }
         }
 
         private void toolStripButtonDebug_Click(object sender, EventArgs e)

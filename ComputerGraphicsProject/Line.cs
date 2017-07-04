@@ -6,7 +6,7 @@ namespace ComputerGraphicsProject
 {
     class Line : Primitive
     {
-        protected Point a, b;
+        public Point a, b;
         public Line(Point pa, Point pb)
         {
             // a is on the left, b is on the right
@@ -50,7 +50,6 @@ namespace ComputerGraphicsProject
         // l2不能和l1平行
         public static Point Intersect(Line l1, Line l2)
         {
-            // Console.WriteLine("Intersect");
             if (l1.a.X == l1.b.X)
             {
                 // l1是垂直线段
@@ -61,12 +60,6 @@ namespace ComputerGraphicsProject
             {
                 // l1是水平线段
                 // l2是垂直线段
-               
-                /*
-                Console.WriteLine(l2.a.ToString());
-                Console.WriteLine(l2.b.ToString());
-               */
-
                 if (l2.a.X == l2.b.X)
                 {
                     return new Point(l2.a.X, l1.a.Y);
@@ -131,7 +124,6 @@ namespace ComputerGraphicsProject
             }
         }
 
-        /*
         public override void Trim(Rectangle rect)
 		{
 			bool aInRect = Helper.IsInRectangle(rect, a);
@@ -303,8 +295,8 @@ namespace ComputerGraphicsProject
             vertices.Add(a);
             vertices.Add(b);
 		}  
-        */
 
+    /*
         // 利用矩形rect对线段进行裁剪
         // 如果线段有部分在矩形内部，则只保留那部分
         // 如果线段完全在矩形内部或者完全在矩形外部， 则不变
@@ -364,6 +356,7 @@ namespace ComputerGraphicsProject
                 vertices.Add(b);
             }
         }
+        */
 
         public override void Translation(int dx, int dy)
         {
