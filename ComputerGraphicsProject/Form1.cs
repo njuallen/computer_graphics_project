@@ -21,8 +21,8 @@ namespace ComputerGraphicsProject
         }
 
         // *************************** 不变量 *****************************
-        static int form_width = 800;
-        static int form_height = 600;
+        public static int form_width = 800;
+        public static int form_height = 600;
         // 用于绘图的颜色的数量，不包括空白颜色
         static int numColor = 4;
 
@@ -597,48 +597,91 @@ namespace ComputerGraphicsProject
         }
         #endregion
 
-        #region Fill
+        #region Fill/ScanFill
 
         // 填充的操作模式很简单，单击确定一个点/图形
         // 并从那个点开始泛滥填充或对那个多边形进行扫描线填充
 
         private void InitFill()
         {
-            SetMouseUpEventHandler(new MouseEventHandler(Fill_MouseUp));
-            SetMouseDownEventHandler(new MouseEventHandler(Fill_MouseDown));
-            SetMouseMoveEventHandler(new MouseEventHandler(Fill_MouseMove));
+            SetMouseUpEventHandler(new MouseEventHandler(DefaultMouseEventHandler));
+            SetMouseDownEventHandler(new MouseEventHandler(DefaultMouseEventHandler));
+            SetMouseMoveEventHandler(new MouseEventHandler(DefaultMouseEventHandler));
             SetMouseClickEventHandler(new MouseEventHandler(Fill_MouseClick));
-            SetMouseDoubleClickEventHandler(new MouseEventHandler(Fill_MouseDoubleClick));
-        }
-
-        private void Fill_MouseDown(object sender, MouseEventArgs e)
-        {
-        }
-
-        private void Fill_MouseUp(object sender, MouseEventArgs e)
-        {
-        }
-
-        private void Fill_MouseMove(object sender, MouseEventArgs e)
-        {
+            SetMouseDoubleClickEventHandler(new MouseEventHandler(DefaultMouseEventHandler));
         }
 
         private void Fill_MouseClick(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
             {
+                List<Point> lp = null;
                 var point = PointToClient(Cursor.Position);
-                var block = new Block(point, this);
-                graphics.Add(block);
-                // 立即画出来
-                block.Draw(fillColor);
-                UpdateScreen();
+                if (mode == "Fill")
+                {
+                    lp = Fill(point);
+                  
+                }
+                else
+                {
+                    // mode == "ScanFill"
+                    foreach(var g in graphics)
+                        if (g.graphicType == "Polygon" && g.Distance(point) <= 3.0)
+                        {
+                            lp = ((Polygon)g).ScanLineFill();
+                            break;
+                        }
+                }
+                if (lp != null)
+                {
+                    var block = new Block(lp, this);
+                    graphics.Add(block);
+                    // 立即画出来
+                    block.Draw(fillColor);
+                    UpdateScreen();
+                }
             }
         }
 
-        private void Fill_MouseDoubleClick(object sender, MouseEventArgs e)
+        // 以p点为中心开始扩展，泛滥填充
+        private List<Point> Fill(Point p)
         {
+
+            List<Point> l = new List<Point>();
+            Queue<Point> q = new Queue<Point>();
+            screenBuffer[p.X, p.Y, fillColor]++;
+            q.Enqueue(p);
+            while (q.Count > 0)
+            {
+                p = q.Dequeue();
+                var x = p.X;
+                var y = p.Y;
+                l.Add(p);
+                // 使用四邻域扩充
+                if (CheckOnCanvas(x + 1, y) && !IsEmpty(x + 1, y))
+                {
+                    screenBuffer[x + 1, y, fillColor]++;
+                    q.Enqueue(new Point(x + 1, y));
+                }
+                if (CheckOnCanvas(x - 1, y) && !IsEmpty(x - 1, y))
+                {
+                    screenBuffer[x - 1, y, fillColor]++;
+                    q.Enqueue(new Point(x - 1, y));
+                }
+                if (CheckOnCanvas(x, y + 1) && !IsEmpty(x, y + 1))
+                {
+                    screenBuffer[x, y + 1, fillColor]++;
+                    q.Enqueue(new Point(x, y + 1));
+                }
+                if (CheckOnCanvas(x, y - 1) && !IsEmpty(x, y - 1))
+                {
+                    screenBuffer[x, y + 1, fillColor]++;
+                    q.Enqueue(new Point(x, y - 1));
+                }
+            }
+            return l;
         }
+
         #endregion
 
         #region Trimming
@@ -969,6 +1012,13 @@ namespace ComputerGraphicsProject
         {
             mode = "Trimming";
             InitTrimming();
+        }
+
+        // 扫描线填充算法
+        private void toolStripButtonScanFill_Click(object sender, EventArgs e)
+        {
+            mode = "ScanFill";
+            InitFill();
         }
 
         private void toolStripButtonFill_Click(object sender, EventArgs e)

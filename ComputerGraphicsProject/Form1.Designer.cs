@@ -48,6 +48,7 @@
             this.toolStripButtonScale = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonWPF3D = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonDebug = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButtonScanFill = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -75,6 +76,7 @@
             this.toolStripButtonBezier,
             this.toolStripButtonBspline,
             this.toolStripButtonTrimming,
+            this.toolStripButtonScanFill,
             this.toolStripButtonFill,
             this.toolStripButtonTranslation,
             this.toolStripButtonRotate,
@@ -291,6 +293,18 @@
             this.toolStripButtonDebug.Text = "调试专用按钮";
             this.toolStripButtonDebug.Click += new System.EventHandler(this.toolStripButtonDebug_Click);
             // 
+            // toolStripButtonScanFill
+            // 
+            this.toolStripButtonScanFill.AutoSize = false;
+            this.toolStripButtonScanFill.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButtonScanFill.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonScanFill.Image")));
+            this.toolStripButtonScanFill.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.toolStripButtonScanFill.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonScanFill.Name = "toolStripButtonScanFill";
+            this.toolStripButtonScanFill.Size = new System.Drawing.Size(40, 40);
+            this.toolStripButtonScanFill.Text = "泛滥填充";
+            this.toolStripButtonScanFill.Click += new System.EventHandler(this.toolStripButtonScanFill_Click);
+            // 
             // FormPaint
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -338,6 +352,7 @@
         private System.Windows.Forms.ToolStripButton toolStripButtonWPF3D;
         private System.Windows.Forms.ToolStripButton toolStripButtonDebug;
         private System.Windows.Forms.ToolStripButton toolStripButtonFill;
+        private System.Windows.Forms.ToolStripButton toolStripButtonScanFill;
     }
 }
 

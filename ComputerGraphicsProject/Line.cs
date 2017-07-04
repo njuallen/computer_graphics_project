@@ -309,6 +309,8 @@ namespace ComputerGraphicsProject
         // 如果线段有部分在矩形内部，则只保留那部分
         // 如果线段完全在矩形内部或者完全在矩形外部， 则不变
         // Liang-Barsky Line Clipping algorithm
+        // Algorithm come from this link:
+        // https://www.cs.helsinki.fi/group/goa/viewing/leikkaus/intro.html
         public override void Trim(Rectangle rect)
         {
             // 矩形的边界
