@@ -13,7 +13,7 @@ namespace ComputerGraphicsProject
         // 图形的端点（仅针对直线、多边形、样条曲线（控制端点））
         public List<Point> vertices = new List<Point>();
         // 这个图元边界上的点
-        protected List<Point> points;
+        public List<Point> points;
 
         // 当前用来作图的form
         protected FormPaint f;

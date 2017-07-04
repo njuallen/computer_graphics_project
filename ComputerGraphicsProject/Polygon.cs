@@ -322,7 +322,20 @@ namespace ComputerGraphicsProject
             if (dx == 0)
                 x = up.X;
             else
-                x = Convert.ToInt32((double)(y - down.Y) * dx / dy + down.X);
+            {
+                // 我们在绘多边形时，用的是Bresenham算法
+                // 而我们这里直接拿算术求交，求出的交点可能和Bresenham画出的线与扫描线的交点不同
+                // x = Convert.ToInt32((double)(y - down.Y) * dx / dy + down.X);
+                // 这样会导致填充时，靠近直线有些像素就填充不起来，效果不好
+                // 因此我们不如直接把直线上的点给算出来，再直接找交点
+                var l = new BresenhamLine(a, b, f);
+                foreach(var p in l.points)
+                    if(p.Y == y)
+                    {
+                        x = p.X;
+                        break;
+                    }
+            }
             return x;
         }
     }
